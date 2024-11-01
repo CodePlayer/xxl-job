@@ -46,19 +46,11 @@ public class EmbedServer {
                         200,
                         60L,
                         TimeUnit.SECONDS,
-                        new LinkedBlockingQueue<Runnable>(2000),
-                        new ThreadFactory() {
-                            @Override
-                            public Thread newThread(Runnable r) {
-                                return new Thread(r, "xxl-job, EmbedServer bizThreadPool-" + r.hashCode());
-                            }
-                        },
-                        new RejectedExecutionHandler() {
-                            @Override
-                            public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
-                                throw new RuntimeException("xxl-job, EmbedServer bizThreadPool is EXHAUSTED!");
-                            }
-                        });
+		                new LinkedBlockingQueue<>(2000),
+		                r -> new Thread(r, "xxl-job, EmbedServer bizThreadPool-" + r.hashCode()),
+		                (r, executor) -> {
+		                    throw new RuntimeException("xxl-job, EmbedServer bizThreadPool is EXHAUSTED!");
+		                });
                 try {
                     // start server
                     ServerBootstrap bootstrap = new ServerBootstrap();
@@ -151,18 +143,15 @@ public class EmbedServer {
             String accessTokenReq = msg.headers().get(XxlJobRemotingUtil.XXL_JOB_ACCESS_TOKEN);
 
             // invoke
-            bizThreadPool.execute(new Runnable() {
-                @Override
-                public void run() {
-                    // do invoke
-                    Object responseObj = process(httpMethod, uri, requestData, accessTokenReq);
+            bizThreadPool.execute(() -> {
+                // do invoke
+                Object responseObj = process(httpMethod, uri, requestData, accessTokenReq);
 
-                    // to json
-                    String responseJson = GsonTool.toJson(responseObj);
+                // to json
+                String responseJson = GsonTool.toJson(responseObj);
 
-                    // write response
-                    writeResponse(ctx, keepAlive, responseJson);
-                }
+                // write response
+                writeResponse(ctx, keepAlive, responseJson);
             });
         }
 
