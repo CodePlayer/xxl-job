@@ -12,17 +12,19 @@ public class GlueJobHandler extends IJobHandler {
 
 	private long glueUpdatetime;
 	private IJobHandler jobHandler;
+
 	public GlueJobHandler(IJobHandler jobHandler, long glueUpdatetime) {
 		this.jobHandler = jobHandler;
 		this.glueUpdatetime = glueUpdatetime;
 	}
+
 	public long getGlueUpdatetime() {
 		return glueUpdatetime;
 	}
 
 	@Override
 	public void execute() throws Exception {
-		XxlJobHelper.log("----------- glue.version:"+ glueUpdatetime +" -----------");
+		XxlJobHelper.log("----------- glue.version:" + glueUpdatetime + " -----------");
 		jobHandler.execute();
 	}
 
@@ -35,4 +37,5 @@ public class GlueJobHandler extends IJobHandler {
 	public void destroy() throws Exception {
 		this.jobHandler.destroy();
 	}
+
 }

@@ -1,10 +1,11 @@
 package com.xxl.job.admin.service.impl;
 
+import java.text.MessageFormat;
+import java.util.*;
+import javax.annotation.Resource;
+
 import com.xxl.job.admin.core.cron.CronExpression;
-import com.xxl.job.admin.core.model.XxlJobGroup;
-import com.xxl.job.admin.core.model.XxlJobInfo;
-import com.xxl.job.admin.core.model.XxlJobLogReport;
-import com.xxl.job.admin.core.model.XxlJobUser;
+import com.xxl.job.admin.core.model.*;
 import com.xxl.job.admin.core.route.ExecutorRouteStrategyEnum;
 import com.xxl.job.admin.core.scheduler.MisfireStrategyEnum;
 import com.xxl.job.admin.core.scheduler.ScheduleTypeEnum;
@@ -23,12 +24,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Resource;
-import java.text.MessageFormat;
-import java.util.*;
-
 /**
  * core job action for xxl-job
+ *
  * @author xuxueli 2016-5-28 15:30:33
  */
 @Service
@@ -56,9 +54,9 @@ public class XxlJobServiceImpl implements XxlJobService {
 
 		// package result
 		Map<String, Object> maps = new HashMap<>();
-	    maps.put("recordsTotal", list_count);		// 总记录数
-	    maps.put("recordsFiltered", list_count);	// 过滤后的总记录数
-	    maps.put("data", list);  					// 分页列表
+		maps.put("recordsTotal", list_count);        // 总记录数
+		maps.put("recordsFiltered", list_count);    // 过滤后的总记录数
+		maps.put("data", list);                    // 分页列表
 		return maps;
 	}
 

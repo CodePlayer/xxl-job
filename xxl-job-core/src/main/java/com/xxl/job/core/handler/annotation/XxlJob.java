@@ -7,24 +7,24 @@ import java.lang.annotation.*;
  *
  * @author xuxueli 2019-12-11 20:50:13
  */
-@Target({ElementType.METHOD})
+@Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface XxlJob {
 
-    /**
-     * jobhandler name
-     */
-    String value();
+	/**
+	 * jobhandler name
+	 */
+	String value();
 
-    /**
-     * init handler, invoked when JobThread init
-     */
-    String init() default "";
+	/**
+	 * init handler, invoked when JobThread init
+	 */
+	String init() default "";
 
-    /**
-     * destroy handler, invoked when JobThread destroy
-     */
-    String destroy() default "";
+	/**
+	 * destroy handler, invoked when JobThread destroy
+	 */
+	String destroy() default "";
 
 }

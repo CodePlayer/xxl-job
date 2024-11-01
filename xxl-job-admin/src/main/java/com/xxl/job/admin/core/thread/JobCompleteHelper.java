@@ -1,5 +1,9 @@
 package com.xxl.job.admin.core.thread;
 
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.*;
+
 import com.xxl.job.admin.core.complete.XxlJobCompleter;
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
 import com.xxl.job.admin.core.model.XxlJobLog;
@@ -10,20 +14,18 @@ import com.xxl.job.core.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.*;
-
 /**
  * job lose-monitor instance
  *
  * @author xuxueli 2015-9-1 18:05:56
  */
 public class JobCompleteHelper {
+
 	private static Logger logger = LoggerFactory.getLogger(JobCompleteHelper.class);
-	
+
 	private static JobCompleteHelper instance = new JobCompleteHelper();
-	public static JobCompleteHelper getInstance(){
+
+	public static JobCompleteHelper getInstance() {
 		return instance;
 	}
 
@@ -32,7 +34,8 @@ public class JobCompleteHelper {
 	private ThreadPoolExecutor callbackThreadPool = null;
 	private Thread monitorThread;
 	private volatile boolean toStop = false;
-	public void start(){
+
+	public void start() {
 
 		// for callback
 		callbackThreadPool = new ThreadPoolExecutor(
@@ -46,7 +49,6 @@ public class JobCompleteHelper {
 					r.run();
 					logger.warn(">>>>>>>>>>> xxl-job, callback too fast, match threadpool rejected handler(run now).");
 				});
-
 
 		// for monitor
 		monitorThread = new Thread(() -> {
@@ -65,17 +67,17 @@ public class JobCompleteHelper {
 				try {
 					// 任务结果丢失处理：调度记录停留在 "运行中" 状态超过10min，且对应执行器心跳注册失败不在线，则将本地调度主动标记失败；
 					Date losedTime = DateUtil.addMinutes(new Date(), -10);
-					List<Long> losedJobIds  = XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().findLostJobIds(losedTime);
+					List<Long> losedJobIds = XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().findLostJobIds(losedTime);
 
-					if (losedJobIds!=null && losedJobIds.size()>0) {
-						for (Long logId: losedJobIds) {
+					if (losedJobIds != null && losedJobIds.size() > 0) {
+						for (Long logId : losedJobIds) {
 
 							XxlJobLog jobLog = new XxlJobLog();
 							jobLog.setId(logId);
 
 							jobLog.setHandleTime(new Date());
 							jobLog.setHandleCode(ReturnT.FAIL_CODE);
-							jobLog.setHandleMsg( I18nUtil.getString("joblog_lost_fail") );
+							jobLog.setHandleMsg(I18nUtil.getString("joblog_lost_fail"));
 
 							XxlJobCompleter.updateHandleInfoAndFinish(jobLog);
 						}
@@ -87,13 +89,13 @@ public class JobCompleteHelper {
 					}
 				}
 
-                try {
-                    TimeUnit.SECONDS.sleep(60);
-                } catch (Exception e) {
-                    if (!toStop) {
-                        logger.error(e.getMessage(), e);
-                    }
-                }
+				try {
+					TimeUnit.SECONDS.sleep(60);
+				} catch (Exception e) {
+					if (!toStop) {
+						logger.error(e.getMessage(), e);
+					}
+				}
 			}
 
 			logger.info(">>>>>>>>>>> xxl-job, JobLosedMonitorHelper stop");
@@ -103,7 +105,7 @@ public class JobCompleteHelper {
 		monitorThread.start();
 	}
 
-	public void toStop(){
+	public void toStop() {
 		toStop = true;
 
 		// stop registryOrRemoveThreadPool
@@ -118,16 +120,15 @@ public class JobCompleteHelper {
 		}
 	}
 
-
 	// ---------------------- helper ----------------------
 
 	public ReturnT<String> callback(List<HandleCallbackParam> callbackParamList) {
 
 		callbackThreadPool.execute(() -> {
-			for (HandleCallbackParam handleCallbackParam: callbackParamList) {
+			for (HandleCallbackParam handleCallbackParam : callbackParamList) {
 				ReturnT<String> callbackResult = callback(handleCallbackParam);
 				logger.debug(">>>>>>>>> JobApiController.callback {}, handleCallbackParam={}, callbackResult={}",
-						(callbackResult.getCode()== ReturnT.SUCCESS_CODE?"success":"fail"), handleCallbackParam, callbackResult);
+						(callbackResult.getCode() == ReturnT.SUCCESS_CODE ? "success" : "fail"), handleCallbackParam, callbackResult);
 			}
 		});
 
@@ -146,7 +147,7 @@ public class JobCompleteHelper {
 
 		// handle msg
 		StringBuilder handleMsg = new StringBuilder();
-		if (log.getHandleMsg()!=null) {
+		if (log.getHandleMsg() != null) {
 			handleMsg.append(log.getHandleMsg()).append("<br>");
 		}
 		if (handleCallbackParam.getHandleMsg() != null) {
@@ -161,7 +162,5 @@ public class JobCompleteHelper {
 
 		return ReturnT.SUCCESS;
 	}
-
-
 
 }

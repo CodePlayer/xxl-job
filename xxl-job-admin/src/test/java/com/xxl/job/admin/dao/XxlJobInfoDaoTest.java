@@ -1,5 +1,9 @@
 package com.xxl.job.admin.dao;
 
+import java.util.Date;
+import java.util.List;
+import javax.annotation.Resource;
+
 import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.scheduler.MisfireStrategyEnum;
 import com.xxl.job.admin.core.scheduler.ScheduleTypeEnum;
@@ -8,19 +12,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class XxlJobInfoDaoTest {
+
 	private static Logger logger = LoggerFactory.getLogger(XxlJobInfoDaoTest.class);
-	
+
 	@Resource
 	private XxlJobInfoDao xxlJobInfoDao;
-	
+
 	@Test
-	public void pageList(){
+	public void pageList() {
 		List<XxlJobInfo> list = xxlJobInfoDao.pageList(0, 20, 0, -1, null, null, null);
 		int list_count = xxlJobInfoDao.pageListCount(0, 20, 0, -1, null, null, null);
 
@@ -29,9 +30,9 @@ public class XxlJobInfoDaoTest {
 
 		List<XxlJobInfo> list2 = xxlJobInfoDao.getJobsByGroup(1);
 	}
-	
+
 	@Test
-	public void save_load(){
+	public void save_load() {
 		XxlJobInfo info = new XxlJobInfo();
 		info.setJobGroup(1);
 		info.setJobDesc("desc");

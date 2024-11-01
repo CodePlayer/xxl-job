@@ -19,7 +19,7 @@ public class CookieInterceptor implements AsyncHandlerInterceptor {
 
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-			ModelAndView modelAndView) throws Exception {
+	                       ModelAndView modelAndView) throws Exception {
 
 		// cookie
 		if (modelAndView != null) {
@@ -34,5 +34,5 @@ public class CookieInterceptor implements AsyncHandlerInterceptor {
 			modelAndView.addObject("I18nUtil", FtlUtil.generateStaticModel(I18nUtil.class.getName()));
 		}
 	}
-	
+
 }

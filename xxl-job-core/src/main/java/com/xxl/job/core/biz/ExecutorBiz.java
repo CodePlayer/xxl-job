@@ -7,39 +7,29 @@ import com.xxl.job.core.biz.model.*;
  */
 public interface ExecutorBiz {
 
-    /**
-     * beat
-     * @return
-     */
-    public ReturnT<String> beat();
+	/**
+	 * beat
+	 */
+	public ReturnT<String> beat();
 
-    /**
-     * idle beat
-     *
-     * @param idleBeatParam
-     * @return
-     */
-    public ReturnT<String> idleBeat(IdleBeatParam idleBeatParam);
+	/**
+	 * idle beat
+	 */
+	public ReturnT<String> idleBeat(IdleBeatParam idleBeatParam);
 
-    /**
-     * run
-     * @param triggerParam
-     * @return
-     */
-    public ReturnT<String> run(TriggerParam triggerParam);
+	/**
+	 * run
+	 */
+	public ReturnT<String> run(TriggerParam triggerParam);
 
-    /**
-     * kill
-     * @param killParam
-     * @return
-     */
-    public ReturnT<String> kill(KillParam killParam);
+	/**
+	 * kill
+	 */
+	public ReturnT<String> kill(KillParam killParam);
 
-    /**
-     * log
-     * @param logParam
-     * @return
-     */
-    public ReturnT<LogResult> log(LogParam logParam);
+	/**
+	 * log
+	 */
+	public ReturnT<LogResult> log(LogParam logParam);
 
 }

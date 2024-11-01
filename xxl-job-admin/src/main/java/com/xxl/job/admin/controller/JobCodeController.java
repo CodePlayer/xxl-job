@@ -1,5 +1,10 @@
 package com.xxl.job.admin.controller;
 
+import java.util.Date;
+import java.util.List;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
 import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobLogGlue;
 import com.xxl.job.admin.core.util.I18nUtil;
@@ -12,19 +17,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.List;
-
 /**
  * job code controller
+ *
  * @author xuxueli 2015-12-19 16:13:16
  */
 @Controller
 @RequestMapping("/jobcode")
 public class JobCodeController {
-	
+
 	@Resource
 	private XxlJobInfoDao xxlJobInfoDao;
 	@Resource
@@ -52,22 +53,22 @@ public class JobCodeController {
 		model.addAttribute("jobLogGlues", jobLogGlues);
 		return "jobcode/jobcode.index";
 	}
-	
+
 	@RequestMapping("/save")
 	@ResponseBody
 	public ReturnT<String> save(Model model, int id, String glueSource, String glueRemark) {
 		// valid
-		if (glueRemark==null) {
+		if (glueRemark == null) {
 			return new ReturnT<>(500, (I18nUtil.getString("system_please_input") + I18nUtil.getString("jobinfo_glue_remark")));
 		}
-		if (glueRemark.length()<4 || glueRemark.length()>100) {
+		if (glueRemark.length() < 4 || glueRemark.length() > 100) {
 			return new ReturnT<>(500, I18nUtil.getString("jobinfo_glue_remark_limit"));
 		}
 		XxlJobInfo exists_jobInfo = xxlJobInfoDao.loadById(id);
 		if (exists_jobInfo == null) {
 			return new ReturnT<>(500, I18nUtil.getString("jobinfo_glue_jobid_unvalid"));
 		}
-		
+
 		// update new code
 		exists_jobInfo.setGlueSource(glueSource);
 		exists_jobInfo.setGlueRemark(glueRemark);
@@ -92,5 +93,5 @@ public class JobCodeController {
 
 		return ReturnT.SUCCESS;
 	}
-	
+
 }
