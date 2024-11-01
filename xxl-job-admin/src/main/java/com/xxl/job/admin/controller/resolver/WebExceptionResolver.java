@@ -29,7 +29,7 @@ public class WebExceptionResolver implements HandlerExceptionResolver {
 			HttpServletResponse response, Object handler, Exception ex) {
 
 		if (!(ex instanceof XxlJobException)) {
-			logger.error("WebExceptionResolver:{}", ex);
+			logger.error("WebExceptionResolver", ex);
 		}
 
 		// if json
