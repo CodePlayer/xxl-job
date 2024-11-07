@@ -20,21 +20,20 @@ import org.slf4j.LoggerFactory;
  */
 public class JobScheduleHelper {
 
-	private static Logger logger = LoggerFactory.getLogger(JobScheduleHelper.class);
+	static final Logger logger = LoggerFactory.getLogger(JobScheduleHelper.class);
 
-	private static JobScheduleHelper instance = new JobScheduleHelper();
-
-	public static JobScheduleHelper getInstance() {
-		return instance;
-	}
-
+	static final JobScheduleHelper instance = new JobScheduleHelper();
 	public static final long PRE_READ_MS = 5000;    // pre read
+	static final Map<Integer, List<Integer>> ringData = new ConcurrentHashMap<>();
 
 	private Thread scheduleThread;
 	private Thread ringThread;
 	private volatile boolean scheduleThreadToStop = false;
 	private volatile boolean ringThreadToStop = false;
-	private volatile static Map<Integer, List<Integer>> ringData = new ConcurrentHashMap<>();
+
+	public static JobScheduleHelper getInstance() {
+		return instance;
+	}
 
 	public void start() {
 

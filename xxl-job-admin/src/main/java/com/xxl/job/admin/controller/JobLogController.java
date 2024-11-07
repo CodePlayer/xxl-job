@@ -196,7 +196,6 @@ public class JobLogController {
 	@RequestMapping("/clearLog")
 	@ResponseBody
 	public ReturnT<String> clearLog(int jobGroup, int jobId, int type) {
-
 		Date clearBeforeTime = null;
 		int clearBeforeNum = 0;
 		if (type == 1) {
@@ -216,7 +215,7 @@ public class JobLogController {
 		} else if (type == 8) {
 			clearBeforeNum = 100000;    // 清理十万条以前日志数据
 		} else if (type == 9) {
-			clearBeforeNum = 0;            // 清理所有日志数据
+			// 清理所有日志数据
 		} else {
 			return new ReturnT<>(ReturnT.FAIL_CODE, I18nUtil.getString("joblog_clean_type_unvalid"));
 		}

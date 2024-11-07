@@ -2,7 +2,6 @@ package com.xxl.job.admin.controller;
 
 import java.util.*;
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 import com.xxl.job.admin.controller.annotation.PermissionLimit;
 import com.xxl.job.admin.core.model.XxlJobGroup;
@@ -12,7 +11,6 @@ import com.xxl.job.admin.dao.*;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.enums.RegistryConfig;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,17 +32,14 @@ public class JobGroupController {
 
 	@RequestMapping
 	@PermissionLimit(adminuser = true)
-	public String index(Model model) {
+	public String index() {
 		return "jobgroup/jobgroup.index";
 	}
 
 	@RequestMapping("/pageList")
 	@ResponseBody
 	@PermissionLimit(adminuser = true)
-	public Map<String, Object> pageList(HttpServletRequest request,
-	                                    @RequestParam(required = false, defaultValue = "0") int start,
-	                                    @RequestParam(required = false, defaultValue = "10") int length,
-	                                    String appname, String title) {
+	public Map<String, Object> pageList(@RequestParam(required = false, defaultValue = "0") int start, @RequestParam(required = false, defaultValue = "10") int length, String appname, String title) {
 
 		// page query
 		List<XxlJobGroup> list = xxlJobGroupDao.pageList(start, length, appname, title);
