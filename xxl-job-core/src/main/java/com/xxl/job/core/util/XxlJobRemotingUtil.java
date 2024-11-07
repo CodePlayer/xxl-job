@@ -18,7 +18,7 @@ import org.springframework.util.StringUtils;
  */
 public class XxlJobRemotingUtil {
 
-	private static Logger logger = LoggerFactory.getLogger(XxlJobRemotingUtil.class);
+	private static final Logger logger = LoggerFactory.getLogger(XxlJobRemotingUtil.class);
 	public static final String XXL_JOB_ACCESS_TOKEN = "XXL-JOB-ACCESS-TOKEN";
 
 	// trust-https start
@@ -89,7 +89,7 @@ public class XxlJobRemotingUtil {
 
 			// write requestBody
 			if (requestObj != null) {
-				String requestBody = GsonTool.toJson(requestObj);
+				String requestBody = JacksonTool.writeValueAsString(requestObj);
 
 				DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream());
 				dataOutputStream.write(requestBody.getBytes(StandardCharsets.UTF_8));
@@ -121,8 +121,7 @@ public class XxlJobRemotingUtil {
 
 			// parse returnT
 			try {
-				ReturnT returnT = GsonTool.fromJson(resultJson, ReturnT.class, returnTargClassOfT);
-				return returnT;
+				return JacksonTool.readValue(resultJson, ReturnT.class, returnTargClassOfT);
 			} catch (Exception e) {
 				logger.error("xxl-job remoting (url=" + url + ") response content invalid(" + resultJson + ").", e);
 				return new ReturnT<String>(ReturnT.FAIL_CODE, "xxl-job remoting (url=" + url + ") response content invalid(" + resultJson + ").");

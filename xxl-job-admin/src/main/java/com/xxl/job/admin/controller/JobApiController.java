@@ -8,7 +8,7 @@ import com.xxl.job.admin.controller.annotation.PermissionLimit;
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
 import com.xxl.job.core.biz.AdminBiz;
 import com.xxl.job.core.biz.model.*;
-import com.xxl.job.core.util.GsonTool;
+import com.xxl.job.core.util.JacksonTool;
 import com.xxl.job.core.util.XxlJobRemotingUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -48,14 +48,14 @@ public class JobApiController {
 		// services mapping
 		switch (uri) {
 			case "callback":
-				List<HandleCallbackParam> callbackParamList = GsonTool.fromJson(data, List.class, HandleCallbackParam.class);
+				List<HandleCallbackParam> callbackParamList = JacksonTool.readValue(data, List.class, HandleCallbackParam.class);
 				return adminBiz.callback(callbackParamList);
 			case "registry": {
-				RegistryParam registryParam = GsonTool.fromJson(data, RegistryParam.class);
+				RegistryParam registryParam = JacksonTool.readValue(data, RegistryParam.class);
 				return adminBiz.registry(registryParam);
 			}
 			case "registryRemove": {
-				RegistryParam registryParam = GsonTool.fromJson(data, RegistryParam.class);
+				RegistryParam registryParam = JacksonTool.readValue(data, RegistryParam.class);
 				return adminBiz.registryRemove(registryParam);
 			}
 			default:

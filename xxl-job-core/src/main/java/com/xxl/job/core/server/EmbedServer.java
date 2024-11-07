@@ -145,7 +145,7 @@ public class EmbedServer {
 				Object responseObj = process(httpMethod, uri, requestData, accessTokenReq);
 
 				// to json
-				String responseJson = GsonTool.toJson(responseObj);
+				String responseJson = JacksonTool.writeValueAsString(responseObj);
 
 				// write response
 				writeResponse(ctx, keepAlive, responseJson);
@@ -171,16 +171,16 @@ public class EmbedServer {
 					case "/beat":
 						return executorBiz.beat();
 					case "/idleBeat":
-						IdleBeatParam idleBeatParam = GsonTool.fromJson(requestData, IdleBeatParam.class);
+						IdleBeatParam idleBeatParam = JacksonTool.readValue(requestData, IdleBeatParam.class);
 						return executorBiz.idleBeat(idleBeatParam);
 					case "/run":
-						TriggerParam triggerParam = GsonTool.fromJson(requestData, TriggerParam.class);
+						TriggerParam triggerParam = JacksonTool.readValue(requestData, TriggerParam.class);
 						return executorBiz.run(triggerParam);
 					case "/kill":
-						KillParam killParam = GsonTool.fromJson(requestData, KillParam.class);
+						KillParam killParam = JacksonTool.readValue(requestData, KillParam.class);
 						return executorBiz.kill(killParam);
 					case "/log":
-						LogParam logParam = GsonTool.fromJson(requestData, LogParam.class);
+						LogParam logParam = JacksonTool.readValue(requestData, LogParam.class);
 						return executorBiz.log(logParam);
 					default:
 						return new ReturnT<String>(ReturnT.FAIL_CODE, "invalid request, uri-mapping(" + uri + ") not found.");
