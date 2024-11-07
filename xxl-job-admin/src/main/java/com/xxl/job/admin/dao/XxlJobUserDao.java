@@ -1,9 +1,10 @@
 package com.xxl.job.admin.dao;
 
+import java.util.List;
+
 import com.xxl.job.admin.core.model.XxlJobUser;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import java.util.List;
 
 /**
  * @author xuxueli 2019-05-04 16:44:59

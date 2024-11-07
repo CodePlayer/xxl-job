@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JacksonUtil {
 
-	private static Logger logger = LoggerFactory.getLogger(JacksonUtil.class);
+	private static final Logger logger = LoggerFactory.getLogger(JacksonUtil.class);
 
 	private final static ObjectMapper objectMapper = new ObjectMapper();
 

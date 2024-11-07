@@ -3,28 +3,28 @@ package com.xxl.job.core.handler.annotation;
 import java.lang.annotation.*;
 
 /**
- * annotation for method jobhandler
+ * annotation for method job handler
  *
  * @author xuxueli 2019-12-11 20:50:13
  */
-@Target({ElementType.METHOD})
+@Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface XxlJob {
 
-    /**
-     * jobhandler name
-     */
-    String value();
+	/**
+	 * job handler name
+	 */
+	String value();
 
-    /**
-     * init handler, invoked when JobThread init
-     */
-    String init() default "";
+	/**
+	 * init handler, invoked when JobThread init
+	 */
+	String init() default "";
 
-    /**
-     * destroy handler, invoked when JobThread destroy
-     */
-    String destroy() default "";
+	/**
+	 * destroy handler, invoked when JobThread destroy
+	 */
+	String destroy() default "";
 
 }

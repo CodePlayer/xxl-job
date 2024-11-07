@@ -97,7 +97,7 @@
 			<plugin>
 				<groupId>com.spotify</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
-				<version>0.4.13</version>
+				<version>1.2.2</version>
 				<configuration>
 					<!-- made of '[a-z0-9-_.]' -->
 					<imageName>${project.artifactId}:${project.version}</imageName>

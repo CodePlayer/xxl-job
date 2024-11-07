@@ -1,9 +1,9 @@
 package com.xxl.job.admin.core.trigger;
 
+import java.util.Date;
+
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
-import com.xxl.job.admin.core.model.XxlJobGroup;
-import com.xxl.job.admin.core.model.XxlJobInfo;
-import com.xxl.job.admin.core.model.XxlJobLog;
+import com.xxl.job.admin.core.model.*;
 import com.xxl.job.admin.core.route.ExecutorRouteStrategyEnum;
 import com.xxl.job.admin.core.scheduler.XxlJobScheduler;
 import com.xxl.job.admin.core.util.I18nUtil;
@@ -17,15 +17,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import java.util.Date;
-
 /**
  * xxl-job trigger
  * Created by xuxueli on 17/7/13.
  */
 public class XxlJobTrigger {
 
-	private static Logger logger = LoggerFactory.getLogger(XxlJobTrigger.class);
+	private static final Logger logger = LoggerFactory.getLogger(XxlJobTrigger.class);
 
 	/**
 	 * trigger job
@@ -198,7 +196,8 @@ public class XxlJobTrigger {
 			runResult = new ReturnT<>(ReturnT.FAIL_CODE, ThrowableUtil.toString(e));
 		}
 
-		String runResultSB = I18nUtil.getString("jobconf_trigger_run") + "：" + "<br>address：" + address
+		String runResultSB = I18nUtil.getString("jobconf_trigger_run") + "："
+				+ "<br>address：" + address
 				+ "<br>code：" + runResult.getCode()
 				+ "<br>msg：" + runResult.getMsg();
 

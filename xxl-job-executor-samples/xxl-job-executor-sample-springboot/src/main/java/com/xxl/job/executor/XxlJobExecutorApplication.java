@@ -10,7 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class XxlJobExecutorApplication {
 
 	public static void main(String[] args) {
-        SpringApplication.run(XxlJobExecutorApplication.class, args);
+		SpringApplication.run(XxlJobExecutorApplication.class, args);
 	}
 
 }

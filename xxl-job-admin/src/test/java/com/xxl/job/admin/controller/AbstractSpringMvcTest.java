@@ -11,13 +11,13 @@ import org.springframework.web.context.WebApplicationContext;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AbstractSpringMvcTest {
 
-  protected MockMvc mockMvc;
-  @Resource
-  private WebApplicationContext applicationContext;
+	protected MockMvc mockMvc;
+	@Resource
+	private WebApplicationContext applicationContext;
 
-  @BeforeEach
-  public void setup() {
-    this.mockMvc = MockMvcBuilders.webAppContextSetup(this.applicationContext).build();
-  }
+	@BeforeEach
+	public void setup() {
+		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.applicationContext).build();
+	}
 
 }

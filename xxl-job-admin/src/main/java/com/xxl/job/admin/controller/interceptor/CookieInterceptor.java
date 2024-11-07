@@ -34,5 +34,5 @@ public class CookieInterceptor implements AsyncHandlerInterceptor {
 			modelAndView.addObject("I18nUtil", FtlUtil.generateStaticModel(I18nUtil.class.getName()));
 		}
 	}
-	
+
 }

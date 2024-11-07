@@ -22,28 +22,25 @@ import org.springframework.util.StringUtils;
  */
 @Component
 public class EmailJobAlarm implements JobAlarm {
-    private static Logger logger = LoggerFactory.getLogger(EmailJobAlarm.class);
 
-    /**
-     * fail alarm
-     *
-     * @param jobLog
-     */
-    @Override
-    public boolean doAlarm(XxlJobInfo info, XxlJobLog jobLog){
-        boolean alarmResult = true;
+	private static Logger logger = LoggerFactory.getLogger(EmailJobAlarm.class);
 
-        // send monitor email
-        if (info != null && StringUtils.hasText(info.getAlarmEmail())) {
-
-            // alarmContent
-            String alarmContent = "Alarm Job LogId=" + jobLog.getId();
-            if (jobLog.getTriggerCode() != ReturnT.SUCCESS_CODE) {
-                alarmContent += "<br>TriggerMsg=<br>" + jobLog.getTriggerMsg();
-            }
-            if (jobLog.getHandleCode()>0 && jobLog.getHandleCode() != ReturnT.SUCCESS_CODE) {
-                alarmContent += "<br>HandleCode=" + jobLog.getHandleMsg();
-            }
+	/**
+	 * fail alarm
+	 */
+	@Override
+	public boolean doAlarm(XxlJobInfo info, XxlJobLog jobLog) {
+		boolean alarmResult = true;
+		// send monitor email
+		if (info != null && StringUtils.hasText(info.getAlarmEmail())) {
+			// alarmContent
+			String alarmContent = "Alarm Job LogId=" + jobLog.getId();
+			if (jobLog.getTriggerCode() != ReturnT.SUCCESS_CODE) {
+				alarmContent += "<br>TriggerMsg=<br>" + jobLog.getTriggerMsg();
+			}
+			if (jobLog.getHandleCode() > 0 && jobLog.getHandleCode() != ReturnT.SUCCESS_CODE) {
+				alarmContent += "<br>HandleCode=" + jobLog.getHandleMsg();
+			}
 
 			// email info
 			final XxlJobAdminConfig adminConfig = XxlJobAdminConfig.getAdminConfig();
@@ -77,36 +74,34 @@ public class EmailJobAlarm implements JobAlarm {
 			}
 		}
 
-        return alarmResult;
-    }
+		return alarmResult;
+	}
 
-    /**
-     * load email job alarm template
-     *
-     * @return
-     */
-    private static String loadEmailJobAlarmTemplate(){
-	    return "<h5>" + I18nUtil.getString("jobconf_monitor_detail") + "：</span>" +
-                "<table border=\"1\" cellpadding=\"3\" style=\"border-collapse:collapse; width:80%;\" >\n" +
-                "   <thead style=\"font-weight: bold;color: #ffffff;background-color: #ff8c00;\" >" +
-                "      <tr>\n" +
-                "         <td width=\"20%\" >"+ I18nUtil.getString("jobinfo_field_jobgroup") +"</td>\n" +
-                "         <td width=\"10%\" >"+ I18nUtil.getString("jobinfo_field_id") +"</td>\n" +
-                "         <td width=\"20%\" >"+ I18nUtil.getString("jobinfo_field_jobdesc") +"</td>\n" +
-                "         <td width=\"10%\" >"+ I18nUtil.getString("jobconf_monitor_alarm_title") +"</td>\n" +
-                "         <td width=\"40%\" >"+ I18nUtil.getString("jobconf_monitor_alarm_content") +"</td>\n" +
-                "      </tr>\n" +
-                "   </thead>\n" +
-                "   <tbody>\n" +
-                "      <tr>\n" +
-                "         <td>{0}</td>\n" +
-                "         <td>{1}</td>\n" +
-                "         <td>{2}</td>\n" +
-                "         <td>"+ I18nUtil.getString("jobconf_monitor_alarm_type") +"</td>\n" +
-                "         <td>{3}</td>\n" +
-                "      </tr>\n" +
-                "   </tbody>\n" +
-                "</table>";
-    }
+	/**
+	 * load email job alarm template
+	 */
+	private static String loadEmailJobAlarmTemplate() {
+		return "<h5>" + I18nUtil.getString("jobconf_monitor_detail") + "：</span>" +
+				"<table border=\"1\" cellpadding=\"3\" style=\"border-collapse:collapse; width:80%;\" >\n" +
+				"   <thead style=\"font-weight: bold;color: #ffffff;background-color: #ff8c00;\" >" +
+				"      <tr>\n" +
+				"         <td width=\"20%\" >" + I18nUtil.getString("jobinfo_field_jobgroup") + "</td>\n" +
+				"         <td width=\"10%\" >" + I18nUtil.getString("jobinfo_field_id") + "</td>\n" +
+				"         <td width=\"20%\" >" + I18nUtil.getString("jobinfo_field_jobdesc") + "</td>\n" +
+				"         <td width=\"10%\" >" + I18nUtil.getString("jobconf_monitor_alarm_title") + "</td>\n" +
+				"         <td width=\"40%\" >" + I18nUtil.getString("jobconf_monitor_alarm_content") + "</td>\n" +
+				"      </tr>\n" +
+				"   </thead>\n" +
+				"   <tbody>\n" +
+				"      <tr>\n" +
+				"         <td>{0}</td>\n" +
+				"         <td>{1}</td>\n" +
+				"         <td>{2}</td>\n" +
+				"         <td>" + I18nUtil.getString("jobconf_monitor_alarm_type") + "</td>\n" +
+				"         <td>{3}</td>\n" +
+				"      </tr>\n" +
+				"   </tbody>\n" +
+				"</table>";
+	}
 
 }
