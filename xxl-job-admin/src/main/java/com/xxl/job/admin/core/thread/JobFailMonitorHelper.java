@@ -8,6 +8,7 @@ import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobLog;
 import com.xxl.job.admin.core.trigger.TriggerTypeEnum;
 import com.xxl.job.admin.core.util.I18nUtil;
+import com.xxl.job.admin.dao.XxlJobLogDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,9 +19,9 @@ import org.slf4j.LoggerFactory;
  */
 public class JobFailMonitorHelper {
 
-	private static Logger logger = LoggerFactory.getLogger(JobFailMonitorHelper.class);
+	private static final Logger logger = LoggerFactory.getLogger(JobFailMonitorHelper.class);
 
-	private static JobFailMonitorHelper instance = new JobFailMonitorHelper();
+	private static final JobFailMonitorHelper instance = new JobFailMonitorHelper();
 
 	public static JobFailMonitorHelper getInstance() {
 		return instance;
@@ -30,45 +31,46 @@ public class JobFailMonitorHelper {
 
 	private Thread monitorThread;
 	private volatile boolean toStop = false;
+	private volatile Long lastId = 0L;
 
 	public void start() {
 		monitorThread = new Thread(() -> {
-
 			// monitor
 			while (!toStop) {
 				try {
-
-					List<Long> failLogIds = XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().findFailJobLogIds(1000);
+					final XxlJobAdminConfig adminConfig = XxlJobAdminConfig.getAdminConfig();
+					final XxlJobLogDao xxlJobLogDao = adminConfig.getXxlJobLogDao();
+					List<Long> failLogIds = xxlJobLogDao.findFailJobLogIds(1000, lastId);
 					if (failLogIds != null && !failLogIds.isEmpty()) {
 						for (Long failLogId : failLogIds) {
-
 							// lock log
-							int lockRet = XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().updateAlarmStatus(failLogId, 0, -1);
+							int lockRet = xxlJobLogDao.updateAlarmStatus(failLogId, 0, -1);
 							if (lockRet < 1) {
 								continue;
 							}
-							XxlJobLog log = XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().load(failLogId);
-							XxlJobInfo info = XxlJobAdminConfig.getAdminConfig().getXxlJobInfoDao().loadById(log.getJobId());
+							XxlJobLog log = xxlJobLogDao.load(failLogId);
+							XxlJobInfo info = adminConfig.getXxlJobInfoDao().loadById(log.getJobId());
 
 							// 1、fail retry monitor
 							if (log.getExecutorFailRetryCount() > 0) {
 								JobTriggerPoolHelper.trigger(log.getJobId(), TriggerTypeEnum.RETRY, (log.getExecutorFailRetryCount() - 1), log.getExecutorShardingParam(), log.getExecutorParam(), null);
 								String retryMsg = "<br><br><span style=\"color:#F39C12;\" > >>>>>>>>>>>" + I18nUtil.getString("jobconf_trigger_type_retry") + "<<<<<<<<<<< </span><br>";
 								log.setTriggerMsg(log.getTriggerMsg() + retryMsg);
-								XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().updateTriggerInfo(log);
+								xxlJobLogDao.updateTriggerInfo(log);
 							}
 
 							// 2、fail alarm monitor
 							int newAlarmStatus; // 告警状态：0-默认、-1=锁定状态、1-无需告警、2-告警成功、3-告警失败
 							if (info != null) {
-								boolean alarmResult = XxlJobAdminConfig.getAdminConfig().getJobAlarmer().alarm(info, log);
+								boolean alarmResult = adminConfig.getJobAlarmer().alarm(info, log);
 								newAlarmStatus = alarmResult ? 2 : 3;
 							} else {
 								newAlarmStatus = 1;
 							}
 
-							XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().updateAlarmStatus(failLogId, -1, newAlarmStatus);
+							xxlJobLogDao.updateAlarmStatus(failLogId, -1, newAlarmStatus);
 						}
+						lastId = failLogIds.get(failLogIds.size() - 1);
 					}
 
 				} catch (Exception e) {
@@ -98,11 +100,14 @@ public class JobFailMonitorHelper {
 	public void toStop() {
 		toStop = true;
 		// interrupt and wait
-		monitorThread.interrupt();
-		try {
-			monitorThread.join();
-		} catch (InterruptedException e) {
-			logger.error(e.getMessage(), e);
+		final Thread thread = monitorThread;
+		if (thread != null) {
+			thread.interrupt();
+			try {
+				thread.join();
+			} catch (InterruptedException e) {
+				logger.error(e.getMessage(), e);
+			}
 		}
 	}
 
