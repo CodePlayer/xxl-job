@@ -1,89 +1,91 @@
-$(function() {
+$(function () {
 
-    // trigger fail, end
-    if ( !(triggerCode == 200 || handleCode != 0) ) {
-        $('#logConsoleRunning').hide();
-        $('#logConsole').append('<span style="color: red;">'+ I18n.joblog_rolling_log_triggerfail +'</span>');
-        return;
-    }
+	// trigger fail, end
+	if (!(triggerCode == 200 || handleCode != 0)) {
+		$('#logConsoleRunning').hide();
+		$('#logConsole').append('<span style="color: red;">' + I18n.joblog_rolling_log_triggerfail + '</span>');
+		return;
+	}
 
-    // pull log
-    var fromLineNum = 1;    // [from, to], start as 1
-    var pullFailCount = 0;
-    function pullLog() {
-        // pullFailCount, max=20
-        if (pullFailCount++ > 20) {
-            logRunStop('<span style="color: red;">'+ I18n.joblog_rolling_log_failoften +'</span>');
-            return;
-        }
+	// pull log
+	var fromLineNum = 1;	// [from, to], start as 1
+	var pullFailCount = 0;
 
-        // load
-        console.log("pullLog, fromLineNum:" + fromLineNum);
+	function pullLog() {
+		// pullFailCount, max=20
+		if (pullFailCount++ > 20) {
+			logRunStop('<span style="color: red;">' + I18n.joblog_rolling_log_failoften + '</span>');
+			return;
+		}
 
-        $.ajax({
-            type : 'POST',
-            async: false,   // sync, make log ordered
-            url : base_url + '/joblog/logDetailCat',
-            data : {
-                "logId":logId,
-                "fromLineNum":fromLineNum
-            },
-            dataType : "json",
-            success : function(data){
+		// load
+		console.log("pullLog, fromLineNum:" + fromLineNum);
 
-                if (data.code == 200) {
-                    if (!data.content) {
-                        console.log('pullLog fail');
-                        return;
-                    }
-                    if (fromLineNum != data.content.fromLineNum) {
-                        console.log('pullLog fromLineNum not match');
-                        return;
-                    }
-                    if (fromLineNum > data.content.toLineNum ) {
-                        console.log('pullLog already line-end');
+		$.ajax({
+			type: 'POST',
+			async: false,   // sync, make log ordered
+			url: base_url + '/joblog/logDetailCat',
+			data: {
+				"logId": logId,
+				"fromLineNum": fromLineNum
+			},
+			dataType: "json",
+			success: function (data) {
 
-                        // valid end
-                        if (data.content.end) {
-                            logRunStop('<br><span style="color: green;">[Rolling Log Finish]</span>');
-                            return;
-                        }
+				if (data.code == 200) {
+					if (!data.content) {
+						console.log('pullLog fail');
+						return;
+					}
+					if (fromLineNum != data.content.fromLineNum) {
+						console.log('pullLog fromLineNum not match');
+						return;
+					}
+					if (fromLineNum > data.content.toLineNum) {
+						console.log('pullLog already line-end');
 
-                        return;
-                    }
+						// valid end
+						if (data.content.end) {
+							logRunStop('<br><span style="color: green;">[Rolling Log Finish]</span>');
+							return;
+						}
 
-                    // append content
-                    fromLineNum = data.content.toLineNum + 1;
-                    $('#logConsole').append(data.content.logContent);
-                    pullFailCount = 0;
+						return;
+					}
 
-                    // scroll to bottom
-                    scrollTo(0, document.body.scrollHeight);        // $('#logConsolePre').scrollTop( document.body.scrollHeight + 300 );
+					// append content
+					fromLineNum = data.content.toLineNum + 1;
+					$('#logConsole').append(data.content.logContent);
+					pullFailCount = 0;
 
-                } else {
-                    console.log('pullLog fail:'+data.msg);
-                }
-            }
-        });
-    }
+					// scroll to bottom
+					scrollTo(0, document.body.scrollHeight);		// $('#logConsolePre').scrollTop( document.body.scrollHeight + 300 );
 
-    // pull first page
-    pullLog();
+				} else {
+					console.log('pullLog fail:' + data.msg);
+				}
+			}
+		});
+	}
 
-    // handler already callback, end
-    if (handleCode > 0) {
-        logRunStop('<br><span style="color: green;">[Load Log Finish]</span>');
-        return;
-    }
+	// pull first page
+	pullLog();
 
-    // round until end
-    var logRun = setInterval(function () {
-        pullLog()
-    }, 3000);
-    function logRunStop(content){
-        $('#logConsoleRunning').hide();
-        logRun = window.clearInterval(logRun);
-        $('#logConsole').append(content);
-    }
+	// handler already callback, end
+	if (handleCode > 0) {
+		logRunStop('<br><span style="color: green;">[Load Log Finish]</span>');
+		return;
+	}
+
+	// round until end
+	var logRun = setInterval(function () {
+		pullLog()
+	}, 3000);
+
+	function logRunStop(content) {
+		$('#logConsoleRunning').hide();
+		logRun = window.clearInterval(logRun);
+		$('#logConsole').append(content);
+	}
 
 });
