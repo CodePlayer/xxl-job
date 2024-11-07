@@ -1,5 +1,7 @@
 package com.xxl.job.core.glue;
 
+import org.apache.commons.lang3.EnumUtils;
+
 /**
  * Created by xuxueli on 17/4/26.
  */
@@ -13,12 +15,12 @@ public enum GlueTypeEnum {
 	GLUE_NODEJS("GLUE(Nodejs)", true, "node", ".js"),
 	GLUE_POWERSHELL("GLUE(PowerShell)", true, "powershell", ".ps1");
 
-	private String desc;
-	private boolean isScript;
-	private String cmd;
-	private String suffix;
+	final String desc;
+	final boolean isScript;
+	final String cmd;
+	final String suffix;
 
-	private GlueTypeEnum(String desc, boolean isScript, String cmd, String suffix) {
+	GlueTypeEnum(String desc, boolean isScript, String cmd, String suffix) {
 		this.desc = desc;
 		this.isScript = isScript;
 		this.cmd = cmd;
@@ -42,12 +44,7 @@ public enum GlueTypeEnum {
 	}
 
 	public static GlueTypeEnum match(String name) {
-		for (GlueTypeEnum item : GlueTypeEnum.values()) {
-			if (item.name().equals(name)) {
-				return item;
-			}
-		}
-		return null;
+		return EnumUtils.getEnum(GlueTypeEnum.class, name);
 	}
 
 }
