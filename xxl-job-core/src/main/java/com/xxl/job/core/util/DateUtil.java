@@ -1,9 +1,9 @@
 package com.xxl.job.core.util;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
 
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,18 +20,8 @@ public class DateUtil {
 	static final String DATE_FORMAT = "yyyy-MM-dd";
 	static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
-	static final ThreadLocal<Map<String, DateFormat>> dateFormatThreadLocal = ThreadLocal.withInitial(HashMap::new);
-
-	private static DateFormat getDateFormat(String pattern) {
-		if (pattern == null) {
-			throw new IllegalArgumentException("pattern cannot be empty.");
-		}
-		final Map<String, DateFormat> dateFormatMap = dateFormatThreadLocal.get();
-		DateFormat format = dateFormatMap.get(pattern);
-		if (format == null) {
-			dateFormatMap.put(pattern, format = new SimpleDateFormat(pattern));
-		}
-		return format;
+	static FastDateFormat getDateFormat(String pattern) {
+		return FastDateFormat.getInstance(pattern);
 	}
 
 	/**
