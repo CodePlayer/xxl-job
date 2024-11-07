@@ -1,7 +1,6 @@
 package com.xxl.job.admin.service;
 
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobUser;
@@ -59,5 +58,19 @@ public interface XxlJobService {
 	 * chart info
 	 */
 	ReturnT<Map<String, Object>> chartInfo(Date startDate, Date endDate);
+
+	/**
+	 * stop AllJob By Group
+	 */
+	ReturnT<String> stopAllJobByGroup(int jobGroup);
+
+	/**
+	 * start AllJob By Group
+	 */
+	ReturnT<String> startAllJobByGroup(int jobGroup);
+
+	ReturnT<String> importAllJob(int jobGroup, String json);
+
+	ReturnT<List<XxlJobInfo>> exportAllJob(int jobGroup);
 
 }

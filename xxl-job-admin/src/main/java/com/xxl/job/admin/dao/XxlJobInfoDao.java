@@ -32,6 +32,8 @@ public interface XxlJobInfoDao {
 
 	int save(XxlJobInfo info);
 
+	int saveIgnore(XxlJobInfo info);
+
 	XxlJobInfo loadById(@Param("id") int id);
 
 	int update(XxlJobInfo xxlJobInfo);
@@ -45,5 +47,9 @@ public interface XxlJobInfoDao {
 	List<XxlJobInfo> scheduleJobQuery(@Param("maxNextTime") long maxNextTime, @Param("pagesize") int pagesize);
 
 	int scheduleUpdate(XxlJobInfo xxlJobInfo);
+
+	List<XxlJobInfo> selectListByJobGroup(@Param("jobGroup") int jobGroup);
+
+	int closeAllOfGroup(@Param("jobGroup") int jobGroup);
 
 }
