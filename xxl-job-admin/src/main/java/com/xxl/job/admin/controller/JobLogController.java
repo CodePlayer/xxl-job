@@ -91,7 +91,7 @@ public class JobLogController {
 		Date triggerTimeStart = null;
 		Date triggerTimeEnd = null;
 		if (StringUtils.hasText(filterTime)) {
-			String[] temp = filterTime.split(" - ");
+			String[] temp = org.apache.commons.lang3.StringUtils.splitByWholeSeparator(filterTime, " - ");
 			if (temp.length == 2) {
 				triggerTimeStart = DateUtil.parseDateTime(temp[0]);
 				triggerTimeEnd = DateUtil.parseDateTime(temp[1]);
