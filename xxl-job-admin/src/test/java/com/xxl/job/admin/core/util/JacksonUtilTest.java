@@ -3,9 +3,9 @@ package com.xxl.job.admin.core.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.alibaba.fastjson2.JSON;
 import org.junit.jupiter.api.Test;
 
-import static com.xxl.job.admin.core.util.JacksonUtil.writeValueAsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JacksonUtilTest {
@@ -18,7 +18,7 @@ public class JacksonUtilTest {
 		map.put("bbb", "222");
 
 		//when
-		String json = writeValueAsString(map);
+		String json = JSON.toJSONString(map);
 
 		//then
 		assertEquals(json, "{\"aaa\":\"111\",\"bbb\":\"222\"}");
@@ -30,7 +30,7 @@ public class JacksonUtilTest {
 		String jsonString = "{\"aaa\":\"111\",\"bbb\":\"222\"}";
 
 		//when
-		Map result = JacksonUtil.readValue(jsonString, Map.class);
+		Map result = JSON.parseObject(jsonString, Map.class);
 
 		//then
 		assertEquals(result.get("aaa"), "111");

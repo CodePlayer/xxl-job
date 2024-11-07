@@ -2,11 +2,13 @@ package com.xxl.job.core.server;
 
 import java.util.concurrent.*;
 
+import com.alibaba.fastjson2.JSON;
 import com.xxl.job.core.biz.ExecutorBiz;
 import com.xxl.job.core.biz.impl.ExecutorBizImpl;
 import com.xxl.job.core.biz.model.*;
 import com.xxl.job.core.thread.ExecutorRegistryThread;
-import com.xxl.job.core.util.*;
+import com.xxl.job.core.util.ThrowableUtil;
+import com.xxl.job.core.util.XxlJobRemotingUtil;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
@@ -145,7 +147,7 @@ public class EmbedServer {
 				Object responseObj = process(httpMethod, uri, requestData, accessTokenReq);
 
 				// to json
-				String responseJson = JacksonTool.writeValueAsString(responseObj);
+				String responseJson = JSON.toJSONString(responseObj);
 
 				// write response
 				writeResponse(ctx, keepAlive, responseJson);
@@ -171,16 +173,16 @@ public class EmbedServer {
 					case "/beat":
 						return executorBiz.beat();
 					case "/idleBeat":
-						IdleBeatParam idleBeatParam = JacksonTool.readValue(requestData, IdleBeatParam.class);
+						IdleBeatParam idleBeatParam = JSON.parseObject(requestData, IdleBeatParam.class);
 						return executorBiz.idleBeat(idleBeatParam);
 					case "/run":
-						TriggerParam triggerParam = JacksonTool.readValue(requestData, TriggerParam.class);
+						TriggerParam triggerParam = JSON.parseObject(requestData, TriggerParam.class);
 						return executorBiz.run(triggerParam);
 					case "/kill":
-						KillParam killParam = JacksonTool.readValue(requestData, KillParam.class);
+						KillParam killParam = JSON.parseObject(requestData, KillParam.class);
 						return executorBiz.kill(killParam);
 					case "/log":
-						LogParam logParam = JacksonTool.readValue(requestData, LogParam.class);
+						LogParam logParam = JSON.parseObject(requestData, LogParam.class);
 						return executorBiz.log(logParam);
 					default:
 						return new ReturnT<String>(ReturnT.FAIL_CODE, "invalid request, uri-mapping(" + uri + ") not found.");

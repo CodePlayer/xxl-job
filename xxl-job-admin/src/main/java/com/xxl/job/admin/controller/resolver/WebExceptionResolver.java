@@ -4,8 +4,8 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson2.JSON;
 import com.xxl.job.admin.core.exception.XxlJobException;
-import com.xxl.job.admin.core.util.JacksonUtil;
 import com.xxl.job.core.biz.model.ReturnT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +51,7 @@ public class WebExceptionResolver implements HandlerExceptionResolver {
 		if (isJson) {
 			try {
 				response.setContentType("application/json;charset=utf-8");
-				response.getWriter().print(JacksonUtil.writeValueAsString(errorResult));
+				response.getWriter().print(JSON.toJSONString(errorResult));
 			} catch (IOException e) {
 				logger.error(e.getMessage(), e);
 			}

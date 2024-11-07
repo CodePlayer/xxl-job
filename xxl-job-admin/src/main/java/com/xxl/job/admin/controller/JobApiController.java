@@ -4,11 +4,11 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import com.alibaba.fastjson2.JSON;
 import com.xxl.job.admin.controller.annotation.PermissionLimit;
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
 import com.xxl.job.core.biz.AdminBiz;
 import com.xxl.job.core.biz.model.*;
-import com.xxl.job.core.util.JacksonTool;
 import com.xxl.job.core.util.XxlJobRemotingUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -48,14 +48,14 @@ public class JobApiController {
 		// services mapping
 		switch (uri) {
 			case "callback":
-				List<HandleCallbackParam> callbackParamList = JacksonTool.readValue(data, List.class, HandleCallbackParam.class);
+				List<HandleCallbackParam> callbackParamList = JSON.parseArray(data, HandleCallbackParam.class);
 				return adminBiz.callback(callbackParamList);
 			case "registry": {
-				RegistryParam registryParam = JacksonTool.readValue(data, RegistryParam.class);
+				RegistryParam registryParam = JSON.parseObject(data, RegistryParam.class);
 				return adminBiz.registry(registryParam);
 			}
 			case "registryRemove": {
-				RegistryParam registryParam = JacksonTool.readValue(data, RegistryParam.class);
+				RegistryParam registryParam = JSON.parseObject(data, RegistryParam.class);
 				return adminBiz.registryRemove(registryParam);
 			}
 			default:

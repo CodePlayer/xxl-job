@@ -5,8 +5,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson2.JSON;
 import com.xxl.job.admin.core.model.XxlJobUser;
-import com.xxl.job.admin.core.util.*;
+import com.xxl.job.admin.core.util.CookieUtil;
+import com.xxl.job.admin.core.util.I18nUtil;
 import com.xxl.job.admin.dao.XxlJobUserDao;
 import com.xxl.job.core.biz.model.ReturnT;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +27,7 @@ public class LoginService {
 	private XxlJobUserDao xxlJobUserDao;
 
 	private String makeToken(XxlJobUser xxlJobUser) {
-		String tokenJson = JacksonUtil.writeValueAsString(xxlJobUser);
+		String tokenJson = JSON.toJSONString(xxlJobUser);
 		return new BigInteger(tokenJson.getBytes()).toString(16);
 	}
 
@@ -33,7 +35,7 @@ public class LoginService {
 		XxlJobUser xxlJobUser = null;
 		if (tokenHex != null) {
 			String tokenJson = new String(new BigInteger(tokenHex, 16).toByteArray());      // username_password(md5)
-			xxlJobUser = JacksonUtil.readValue(tokenJson, XxlJobUser.class);
+			xxlJobUser = JSON.parseObject(tokenJson, XxlJobUser.class);
 		}
 		return xxlJobUser;
 	}

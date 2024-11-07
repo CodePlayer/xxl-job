@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.*;
 
+import com.alibaba.fastjson2.JSON;
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +66,7 @@ public class I18nUtil {
 				map.put(key, prop.getProperty(key));
 			}
 		}
-		return JacksonUtil.writeValueAsString(map);
+		return JSON.toJSONString(map);
 	}
 
 }

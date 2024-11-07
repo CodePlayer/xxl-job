@@ -8,6 +8,9 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import javax.net.ssl.*;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.TypeReference;
+import com.xxl.job.core.biz.model.LogResult;
 import com.xxl.job.core.biz.model.ReturnT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +23,11 @@ public class XxlJobRemotingUtil {
 
 	private static final Logger logger = LoggerFactory.getLogger(XxlJobRemotingUtil.class);
 	public static final String XXL_JOB_ACCESS_TOKEN = "XXL-JOB-ACCESS-TOKEN";
+
+	public static final TypeReference<ReturnT<String>> stringTypeRef = new TypeReference<ReturnT<String>>() {
+	};
+	public static final TypeReference<ReturnT<LogResult>> logResultTypeRef = new TypeReference<ReturnT<LogResult>>() {
+	};
 
 	// trust-https start
 	private static void trustAllHosts(HttpsURLConnection connection) {
@@ -54,7 +62,7 @@ public class XxlJobRemotingUtil {
 	/**
 	 * post
 	 */
-	public static ReturnT postBody(String url, String accessToken, int timeout, Object requestObj, Class returnTargClassOfT) {
+	public static <T> ReturnT<T> postBody(String url, String accessToken, int timeout, Object requestObj, TypeReference<ReturnT<T>> typeRef) {
 		HttpURLConnection connection = null;
 		BufferedReader bufferedReader = null;
 		try {
@@ -89,7 +97,7 @@ public class XxlJobRemotingUtil {
 
 			// write requestBody
 			if (requestObj != null) {
-				String requestBody = JacksonTool.writeValueAsString(requestObj);
+				String requestBody = JSON.toJSONString(requestObj);
 
 				DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream());
 				dataOutputStream.write(requestBody.getBytes(StandardCharsets.UTF_8));
@@ -107,7 +115,7 @@ public class XxlJobRemotingUtil {
 			// valid StatusCode
 			int statusCode = connection.getResponseCode();
 			if (statusCode != 200) {
-				return new ReturnT<String>(ReturnT.FAIL_CODE, "xxl-job remoting fail, StatusCode(" + statusCode + ") invalid. for url : " + url);
+				return new ReturnT<>(ReturnT.FAIL_CODE, "xxl-job remoting fail, StatusCode(" + statusCode + ") invalid. for url : " + url);
 			}
 
 			// result
@@ -121,15 +129,15 @@ public class XxlJobRemotingUtil {
 
 			// parse returnT
 			try {
-				return JacksonTool.readValue(resultJson, ReturnT.class, returnTargClassOfT);
+				return JSON.parseObject(resultJson, typeRef);
 			} catch (Exception e) {
 				logger.error("xxl-job remoting (url=" + url + ") response content invalid(" + resultJson + ").", e);
-				return new ReturnT<String>(ReturnT.FAIL_CODE, "xxl-job remoting (url=" + url + ") response content invalid(" + resultJson + ").");
+				return new ReturnT<>(ReturnT.FAIL_CODE, "xxl-job remoting (url=" + url + ") response content invalid(" + resultJson + ").");
 			}
 
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			return new ReturnT<String>(ReturnT.FAIL_CODE, "xxl-job remoting error(" + e.getMessage() + "), for url : " + url);
+			return new ReturnT<>(ReturnT.FAIL_CODE, "xxl-job remoting error(" + e.getMessage() + "), for url : " + url);
 		} finally {
 			try {
 				if (bufferedReader != null) {
