@@ -79,7 +79,7 @@
 	</select>
 	
 	<select id="pageListCount" resultType="int">
-		SELECT count(1)
+		SELECT COUNT(*)
 		FROM xxl_job_log AS t
 		<trim prefix="WHERE" prefixOverrides="AND | OR" >
 			<if test="jobId==0 and jobGroup gt 0">
@@ -177,12 +177,11 @@
     </select>-->
 
     <select id="findLogReport" resultType="java.util.Map" >
-		SELECT
-			COUNT(handle_code) triggerDayCount,
-			SUM(CASE WHEN (trigger_code in (0, 200) and handle_code = 0) then 1 else 0 end) as triggerDayCountRunning,
-			SUM(CASE WHEN handle_code = 200 then 1 else 0 end) as triggerDayCountSuc
-		FROM xxl_job_log
-		WHERE trigger_time BETWEEN #{from} and #{to}
+	    SELECT COUNT(handle_code) triggerDayCount,
+	           SUM(trigger_code IN (0, 200) AND handle_code = 0) AS triggerDayCountRunning,
+	           SUM(handle_code = 200) AS triggerDayCountSuc
+	    FROM xxl_job_log
+	    WHERE trigger_time BETWEEN #{from} AND #{to}
     </select>
 
 	<select id="findClearLogIds" resultType="long" >
@@ -235,6 +234,7 @@
 			(handle_code = 200)
 		)
 		AND `alarm_status` = 0
+		AND id > #{minId}
 		ORDER BY id ASC
 		LIMIT #{pagesize}
 	</select>
