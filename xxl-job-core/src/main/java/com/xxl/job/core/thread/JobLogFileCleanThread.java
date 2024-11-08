@@ -1,13 +1,12 @@
 package com.xxl.job.core.thread;
 
 import java.io.File;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import com.xxl.job.core.log.XxlJobFileAppender;
+import com.xxl.job.core.util.DateUtil;
 import com.xxl.job.core.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +18,9 @@ import org.slf4j.LoggerFactory;
  */
 public class JobLogFileCleanThread {
 
-	private static Logger logger = LoggerFactory.getLogger(JobLogFileCleanThread.class);
+	private static final Logger logger = LoggerFactory.getLogger(JobLogFileCleanThread.class);
 
-	private static JobLogFileCleanThread instance = new JobLogFileCleanThread();
+	private static final JobLogFileCleanThread instance = new JobLogFileCleanThread();
 
 	public static JobLogFileCleanThread getInstance() {
 		return instance;
@@ -64,13 +63,7 @@ public class JobLogFileCleanThread {
 							}
 
 							// file create date
-							Date logFileCreateDate = null;
-							try {
-								SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-								logFileCreateDate = simpleDateFormat.parse(childFile.getName());
-							} catch (ParseException e) {
-								logger.error(e.getMessage(), e);
-							}
+							Date logFileCreateDate = DateUtil.parseDate(childFile.getName());
 							if (logFileCreateDate == null) {
 								continue;
 							}
