@@ -1,3 +1,7 @@
+function selectByText($options, text) {
+	$options.filter(function () { return $(this).text() == text; }).prop("selected", true)
+}
+
 $(function () {
 
 	// init date tables
@@ -47,7 +51,7 @@ $(function () {
 			{
 				"data": 'jobDesc',
 				"visible": true,
-				"width": '25%'
+				"width": '18%'
 			},
 			{
 				"data": 'scheduleType',
@@ -63,7 +67,7 @@ $(function () {
 			},
 			{
 				"data": 'glueType',
-				"width": '25%',
+				"width": '20%',
 				"visible": true,
 				"render": function (data, type, row) {
 					var glueTypeTitle = findGlueTypeTitle(row.glueType);
@@ -89,7 +93,23 @@ $(function () {
 					return data ? moment(new Date(data)).format("YYYY-MM-DD HH:mm:ss") : "";
 				}
 			},
-			{"data": 'author', "visible": true, "width": '10%'},
+			{
+				"data": 'executorRouteStrategy',
+				"visible": true,
+				"width": '10%',
+				"render": function (data, type, row) {
+					return row.executorRouteStrategy;
+				}
+			},
+			{
+				"data": 'executorBlockStrategy',
+				"visible": true,
+				"width": '10%',
+				"render": function (data, type, row) {
+					return row.executorBlockStrategy;
+				}
+			},
+			{"data": 'author', "visible": false, "width": '10%'},
 			{"data": 'alarmEmail', "visible": false},
 			{
 				"data": 'triggerStatus',
@@ -687,10 +707,10 @@ $(function () {
 		$schedule_conf_CRON.cronGen({});
 
 		// fill advanced
-		$form.find('select[name=executorRouteStrategy]').val(row.executorRouteStrategy);
+		selectByText($form.find("select[name=executorRouteStrategy] option"), row.executorRouteStrategy);
 		$form.find("input[name='childJobId']").val(row.childJobId);
 		$form.find("select[name=misfireStrategy]").val(row.misfireStrategy);
-		$form.find('select[name=executorBlockStrategy]').val(row.executorBlockStrategy);
+		selectByText($form.find("select[name=executorBlockStrategy] option"), row.executorBlockStrategy);
 		$form.find("input[name='executorTimeout']").val(row.executorTimeout);
 		$form.find("input[name='executorFailRetryCount']").val(row.executorFailRetryCount);
 
@@ -843,10 +863,10 @@ $(function () {
 		$schedule_conf_CRON.cronGen({});
 
 		// fill advanced
-		$form.find('select[name=executorRouteStrategy]').val(row.executorRouteStrategy);
+		selectByText($form.find("select[name=executorRouteStrategy] option"), row.executorRouteStrategy);
 		$form.find("input[name=childJobId]").val(row.childJobId);
 		$form.find('select[name=misfireStrategy]').val(row.misfireStrategy);
-		$form.find('select[name=executorBlockStrategy]').val(row.executorBlockStrategy);
+		selectByText($form.find("select[name=executorBlockStrategy] option"), row.executorBlockStrategy);
 		$form.find("input[name=executorTimeout]").val(row.executorTimeout);
 		$form.find("input[name=executorFailRetryCount]").val(row.executorFailRetryCount);
 
