@@ -43,7 +43,7 @@ public class ExecutorBizTest {
 
 		// Assert result
 		Assertions.assertNotNull(retval);
-        Assertions.assertNull(retval.getContent());
+		Assertions.assertNull(retval.getContent());
 		Assertions.assertEquals(500, retval.getCode());
 		Assertions.assertEquals("job thread is running or has trigger queue.", retval.getMsg());
 	}

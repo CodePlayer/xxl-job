@@ -83,16 +83,13 @@ public class XxlJobSpringExecutor extends XxlJobExecutor implements ApplicationC
 		// init job handler from method
 		String[] beanDefinitionNames = applicationContext.getBeanNamesForType(Object.class, false, true);
 		for (String beanDefinitionName : beanDefinitionNames) {
-
 			// get bean
-			Object bean = null;
 			Lazy onBean = applicationContext.findAnnotationOnBean(beanDefinitionName, Lazy.class);
 			if (onBean != null) {
 				logger.debug("xxl-job annotation scan, skip @Lazy Bean:{}", beanDefinitionName);
 				continue;
-			} else {
-				bean = applicationContext.getBean(beanDefinitionName);
 			}
+			Object bean = applicationContext.getBean(beanDefinitionName);
 
 			// filter method
 			Map<Method, XxlJob> annotatedMethods = null;   // referred to ：org.springframework.context.event.EventListenerMethodProcessor.processBean
