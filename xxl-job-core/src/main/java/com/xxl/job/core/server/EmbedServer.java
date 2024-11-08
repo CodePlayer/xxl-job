@@ -45,7 +45,7 @@ public class EmbedServer {
 					60L,
 					TimeUnit.SECONDS,
 					new LinkedBlockingQueue<>(2000),
-					r -> new Thread(r, "xxl-job, EmbedServer bizThreadPool-" + r.hashCode()),
+					XxlJobTool.namedThreadFactory("xxl-job-bizThreadPool-"),
 					(r, executor) -> {
 						throw new RuntimeException("xxl-job, EmbedServer bizThreadPool is EXHAUSTED!");
 					});
