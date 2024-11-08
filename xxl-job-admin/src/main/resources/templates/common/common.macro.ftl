@@ -29,7 +29,7 @@
 	<link rel="stylesheet" href="${request.contextPath}/static/adminlte/bower_components/PACE/themes/blue/pace-theme-flash.css">
 
 	<#-- i18n -->
-	<#global I18n = I18nUtil.getMultString()?eval />
+	<#global I18n = I18nUtil.getMultiString()?eval />
 
 </#macro>
 
@@ -59,7 +59,7 @@
     <script src="${request.contextPath}/static/js/common.1.js"></script>
     <script>
 		var base_url = '${request.contextPath}';
-        var I18n = ${I18nUtil.getMultString()};
+		var I18n = ${I18nUtil.getMultiString()};
 	</script>
 
 </#macro>
