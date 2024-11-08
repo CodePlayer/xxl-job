@@ -123,7 +123,8 @@ $(function () {
 		var id = $(this).attr("_id");
 		var row = tableData['key' + id];
 
-		/*var html = '<div>';
+		/*
+		var html = '<div>';
 		if (row.registryList) {
 			for (var index in row.registryList) {
 				html += (parseInt(index)+1) + '. <span class="badge bg-green" >' + row.registryList[index] + '</span><br>';
@@ -135,20 +136,23 @@ $(function () {
 			title: I18n.jobinfo_opt_registryinfo ,
 			btn: [ I18n.system_ok ],
 			content: html
-		});*/
+		});
+		*/
 
 		var html = '<table class="table table-bordered"><tbody>';
 		if (row.registryList) {
 			for (var index in row.registryList) {
-				html += '<tr><th>' + (parseInt(index) + 1) + '</th>';
+				html += '<tr><th>' + (parseInt(index)+1) + '</th>';
 				html += '<th><span class="badge bg-green" >' + row.registryList[index] + '</span></th><tr>';
 			}
 		}
 		html += '</tbody></table>';
 
-		$('#showRegistryListModal .data').html(html);
-		$('#showRegistryListModal').modal({backdrop: false, keyboard: false}).modal('show');
+		var $modal = $('#showRegistryListModal');
+		$modal.find('.data').html(html);
+		$modal.modal({backdrop: false, keyboard: false}).modal('show');
 	});
+
 
 	// opt_del
 	$("#jobgroup_list").on('click', '.opt_del', function () {
@@ -364,6 +368,5 @@ $(function () {
 		addModalValidate.resetForm();
 		$("#updateModal .form .form-group").removeClass("has-error");
 	});
-
 
 });
