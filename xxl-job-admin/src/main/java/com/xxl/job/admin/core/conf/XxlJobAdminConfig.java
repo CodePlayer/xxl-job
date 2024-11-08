@@ -22,15 +22,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class XxlJobAdminConfig implements InitializingBean, DisposableBean {
 
-	private static XxlJobAdminConfig adminConfig = null;
+	private static XxlJobAdminConfig adminConfig;
+	private XxlJobScheduler xxlJobScheduler;
 
 	public static XxlJobAdminConfig getAdminConfig() {
 		return adminConfig;
 	}
-
-	// ---------------------- XxlJobScheduler ----------------------
-
-	private XxlJobScheduler xxlJobScheduler;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -45,24 +42,17 @@ public class XxlJobAdminConfig implements InitializingBean, DisposableBean {
 		xxlJobScheduler.destroy();
 	}
 
-	// ---------------------- XxlJobScheduler ----------------------
-
 	// conf
 	@Value("${xxl.job.i18n}")
 	private String i18n;
-
 	@Value("${xxl.job.accessToken}")
 	private String accessToken;
-
-	@Value("${spring.mail.from}")
+	@Value("${spring.mail.from:}")
 	private String emailFrom;
-
 	@Value("${xxl.job.triggerpool.fast.max}")
 	private int triggerPoolFastMax;
-
 	@Value("${xxl.job.triggerpool.slow.max}")
 	private int triggerPoolSlowMax;
-
 	@Value("${xxl.job.logretentiondays}")
 	private int logretentiondays;
 
@@ -101,17 +91,11 @@ public class XxlJobAdminConfig implements InitializingBean, DisposableBean {
 	}
 
 	public int getTriggerPoolFastMax() {
-		if (triggerPoolFastMax < 200) {
-			return 200;
-		}
-		return triggerPoolFastMax;
+		return Math.max(triggerPoolFastMax, 200);
 	}
 
 	public int getTriggerPoolSlowMax() {
-		if (triggerPoolSlowMax < 100) {
-			return 100;
-		}
-		return triggerPoolSlowMax;
+		return Math.max(triggerPoolSlowMax, 100);
 	}
 
 	public int getLogretentiondays() {
