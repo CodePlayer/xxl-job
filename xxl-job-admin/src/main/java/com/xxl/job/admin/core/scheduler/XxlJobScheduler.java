@@ -81,7 +81,7 @@ public class XxlJobScheduler {
 
 	public static ExecutorBiz getExecutorBiz(String address) throws Exception {
 		// valid
-        if (!StringUtils.hasText(address)) {
+		if (!StringUtils.hasText(address)) {
 			return null;
 		}
 

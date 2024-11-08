@@ -85,10 +85,10 @@ public class LoginService {
 			if (cookieUser != null) {
 				XxlJobUser dbUser = xxlJobUserDao.loadByUserName(cookieUser.getUsername());
 				if (dbUser != null && cookieUser.getPassword().equals(dbUser.getPassword())) {
-						return dbUser;
-					}
+					return dbUser;
 				}
 			}
+		}
 		return null;
 	}
 
