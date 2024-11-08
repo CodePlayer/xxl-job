@@ -63,7 +63,23 @@
 					<button class="btn btn-block btn-info" id="searchBtn">${I18n.system_search}</button>
 				</div>
 				<div class="col-xs-1">
+					<button class="btn btn-block btn-info" id="startAllJob">一键启动</button>
+				</div>
+				<div class="col-xs-1">
+					<button class="btn btn-block btn-info" id="stopAllJob">一键停止</button>
+				</div>
+				<div class="col-xs-1">
 					<button class="btn btn-block btn-success add" type="button">${I18n.jobinfo_field_add}</button>
+				</div>
+				<div class="col-xs-1">
+					<button class="btn btn-block btn-info" id="exportAllJob">导出</button>
+				</div>
+				<div class="col-xs-1">
+					<div class="input-group">
+						<input type="text" class="form-control" id="importJson" placeholder="导入json" >
+					</div>
+
+					<button class="btn btn-block btn-info" id="importJob" >导入</button>
 				</div>
 		  	</div>
 
