@@ -26,9 +26,10 @@ public class JobAlarmer {
 	 */
 	public boolean alarm(XxlJobInfo info, XxlJobLog jobLog) {
 		boolean result = false;
-		if (jobAlarmList != null && !jobAlarmList.isEmpty()) {
+		final List<JobAlarm> list = jobAlarmList;
+		if (list != null && !list.isEmpty()) {
 			result = true;  // success means all-success
-			for (JobAlarm alarm : jobAlarmList) {
+			for (JobAlarm alarm : list) {
 				boolean resultItem = false;
 				try {
 					resultItem = alarm.doAlarm(info, jobLog);

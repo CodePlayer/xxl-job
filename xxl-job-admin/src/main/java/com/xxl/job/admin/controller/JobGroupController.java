@@ -39,8 +39,9 @@ public class JobGroupController {
 	@RequestMapping("/pageList")
 	@ResponseBody
 	@PermissionLimit(adminuser = true)
-	public Map<String, Object> pageList(@RequestParam(required = false, defaultValue = "0") int start, @RequestParam(required = false, defaultValue = "10") int length, String appname, String title) {
-
+	public Map<String, Object> pageList(@RequestParam(required = false, defaultValue = "0") int start,
+	                                    @RequestParam(required = false, defaultValue = "10") int length,
+	                                    String appname, String title) {
 		// page query
 		List<XxlJobGroup> list = xxlJobGroupDao.pageList(start, length, appname, title);
 		int list_count = xxlJobGroupDao.pageListCount(start, length, appname, title);
@@ -169,9 +170,8 @@ public class JobGroupController {
 		if (allList.size() == 1) {
 			return new ReturnT<>(500, I18nUtil.getString("jobgroup_del_limit_1"));
 		}
-
 		int ret = xxlJobGroupDao.remove(id);
-		return (ret > 0) ? ReturnT.SUCCESS : ReturnT.FAIL;
+		return ret > 0 ? ReturnT.SUCCESS : ReturnT.FAIL;
 	}
 
 	@RequestMapping("/loadById")

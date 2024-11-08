@@ -2,7 +2,7 @@ package com.xxl.job.admin.core.route;
 
 import com.xxl.job.admin.core.route.strategy.*;
 import com.xxl.job.admin.core.util.I18nUtil;
-import org.apache.commons.lang3.EnumUtils;
+import com.xxl.job.core.util.XxlJobTool;
 
 /**
  * Created by xuxueli on 17/3/10.
@@ -29,7 +29,7 @@ public enum ExecutorRouteStrategyEnum {
 	}
 
 	public static ExecutorRouteStrategyEnum match(String name, ExecutorRouteStrategyEnum defaultItem) {
-		return EnumUtils.getEnum(ExecutorRouteStrategyEnum.class, name, defaultItem);
+		return XxlJobTool.getEnum(ExecutorRouteStrategyEnum.class, name, defaultItem);
 	}
 
 	public String getTitle() {

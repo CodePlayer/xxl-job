@@ -54,8 +54,8 @@ public class JobThread extends Thread {
 	public ReturnT<String> pushTriggerQueue(TriggerParam triggerParam) {
 		// avoid repeat
 		if (triggerLogIdSet.contains(triggerParam.getLogId())) {
-			logger.info(">>>>>>>>>>> repeat trigger job, logId:{}", triggerParam.getLogId());
-			return new ReturnT<>(ReturnT.FAIL_CODE, "repeat trigger job, logId:" + triggerParam.getLogId());
+			logger.info(">>>>>>>>>>> duplicate trigger job, logId:{}", triggerParam.getLogId());
+			return new ReturnT<>(ReturnT.FAIL_CODE, "duplicate trigger job, logId:" + triggerParam.getLogId());
 		}
 
 		triggerLogIdSet.add(triggerParam.getLogId());

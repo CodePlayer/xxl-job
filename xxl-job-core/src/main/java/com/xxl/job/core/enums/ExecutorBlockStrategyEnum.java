@@ -1,6 +1,6 @@
 package com.xxl.job.core.enums;
 
-import org.apache.commons.lang3.EnumUtils;
+import com.xxl.job.core.util.XxlJobTool;
 
 /**
  * Created by xuxueli on 17/5/9.
@@ -27,6 +27,6 @@ public enum ExecutorBlockStrategyEnum {
 	}
 
 	public static ExecutorBlockStrategyEnum match(String name, ExecutorBlockStrategyEnum defaultItem) {
-		return EnumUtils.getEnum(ExecutorBlockStrategyEnum.class, name, defaultItem);
+		return XxlJobTool.getEnum(ExecutorBlockStrategyEnum.class, name, defaultItem);
 	}
 }
