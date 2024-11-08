@@ -198,6 +198,117 @@ $(function () {
 		jobTable.fnDraw();
 	});
 
+	//
+	$('#startAllJob').on('click', function () {
+		var typeName = '一键启动';
+		layer.confirm(I18n.system_ok + typeName + '?', {
+			icon: 3,
+			title: I18n.system_tips,
+			btn: [I18n.system_ok, I18n.system_cancel]
+		}, function (index) {
+			layer.close(index);
+			$.ajax({
+				type: 'POST',
+				url: base_url + "/jobinfo/startAllJobByGroup",
+				data: {
+					"jobGroup": $('#jobGroup').val()
+				},
+				dataType: "json",
+				success: function (data) {
+					if (data.code == 200) {
+						layer.msg(I18n.system_success);
+						jobTable.fnDraw(false);
+					} else {
+						layer.msg(data.msg);
+					}
+				}
+			});
+		});
+	});
+
+	//
+	$('#stopAllJob').on('click', function () {
+		var typeName = '一键停止';
+		layer.confirm(I18n.system_ok + typeName + '?', {
+			icon: 3,
+			title: I18n.system_tips,
+			btn: [I18n.system_ok, I18n.system_cancel]
+		}, function (index) {
+			layer.close(index);
+			$.ajax({
+				type: 'POST',
+				url: base_url + "/jobinfo/stopAllJobByGroup",
+				data: {
+					"jobGroup": $('#jobGroup').val()
+				},
+				dataType: "json",
+				success: function (data) {
+					if (data.code == 200) {
+						layer.msg(I18n.system_success);
+						jobTable.fnDraw(false);
+					} else {
+						layer.msg(data.msg);
+					}
+				}
+			});
+		});
+	});
+
+	$('#importJob').on('click', function () {
+		var typeName = '一键导入';
+		layer.confirm(I18n.system_ok + typeName + '?', {
+			icon: 3,
+			title: I18n.system_tips,
+			btn: [I18n.system_ok, I18n.system_cancel]
+		}, function (index) {
+			layer.close(index);
+			$.ajax({
+				type: 'POST',
+				url: base_url + "/jobinfo/importAllJob",
+				data: {
+					"jobGroup": $('#jobGroup').val(),
+					"json": $('#importJson').val()
+				},
+				dataType: "json",
+				success: function (data) {
+					if (data.code == 200) {
+						layer.msg(I18n.system_success);
+						jobTable.fnDraw(false);
+					} else {
+						layer.msg(data.msg);
+					}
+				}
+			});
+		});
+	});
+
+	$('#exportAllJob').on('click', function () {
+		var typeName = '全部导出';
+		layer.confirm(I18n.system_ok + typeName + '?', {
+			icon: 3,
+			title: I18n.system_tips,
+			btn: [I18n.system_ok, I18n.system_cancel]
+		}, function (index) {
+			layer.close(index);
+			$.ajax({
+				type: 'POST',
+				url: base_url + "/jobinfo/exportAllJob",
+				data: {
+					"jobGroup": $('#jobGroup').val()
+				},
+				dataType: "json",
+				success: function (data) {
+					if (data.code == 200) {
+						layer.alert(JSON.stringify(data.content), '标题');
+					} else {
+						layer.msg(data.msg);
+					}
+				}
+			});
+		});
+	});
+
+
 	// jobGroup change
 	$('#jobGroup').on('change', function () {
 		//reload
@@ -387,6 +498,7 @@ $(function () {
 
 		$('#addModal').modal({backdrop: false, keyboard: false}).modal('show');
 	});
+
 	var addModalValidate = $("#addModal .form").validate({
 		errorElement: 'span',
 		errorClass: 'help-block',

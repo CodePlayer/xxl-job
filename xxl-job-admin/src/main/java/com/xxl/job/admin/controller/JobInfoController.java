@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/jobinfo")
 public class JobInfoController {
 
-	private static Logger logger = LoggerFactory.getLogger(JobInfoController.class);
+	private static final Logger logger = LoggerFactory.getLogger(JobInfoController.class);
 
 	@Resource
 	private XxlJobGroupDao xxlJobGroupDao;
@@ -165,7 +165,32 @@ public class JobInfoController {
 			return new ReturnT<>(ReturnT.FAIL_CODE, (I18nUtil.getString("schedule_type") + I18nUtil.getString("system_unvalid")) + e.getMessage());
 		}
 		return new ReturnT<>(result);
+	}
 
+	@RequestMapping("/startAllJobByGroup")
+	@ResponseBody
+	public ReturnT<String> startAllJobByGroup(@RequestParam(name = "jobGroup") int jobGroup) {
+		return xxlJobService.startAllJobByGroup(jobGroup);
+	}
+
+	@RequestMapping("/stopAllJobByGroup")
+	@ResponseBody
+	public ReturnT<String> pauseAllJobByGroup(@RequestParam(name = "jobGroup") int jobGroup) {
+		return xxlJobService.stopAllJobByGroup(jobGroup);
+	}
+
+	/** 导入 */
+	@RequestMapping("/importAllJob")
+	@ResponseBody
+	public ReturnT<String> importAllJob(@RequestParam(name = "jobGroup") int jobGroup, @RequestParam(name = "json") String json) {
+		return xxlJobService.importAllJob(jobGroup, json);
+	}
+
+	/** 导出 */
+	@RequestMapping("/exportAllJob")
+	@ResponseBody
+	public ReturnT<List<XxlJobInfo>> exportAllJob(@RequestParam(name = "jobGroup") int jobGroup) {
+		return xxlJobService.exportAllJob(jobGroup);
 	}
 
 }

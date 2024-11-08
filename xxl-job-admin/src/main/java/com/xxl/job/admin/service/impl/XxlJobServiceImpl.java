@@ -20,6 +20,7 @@ import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.enums.ExecutorBlockStrategyEnum;
 import com.xxl.job.core.glue.GlueTypeEnum;
 import com.xxl.job.core.util.DateUtil;
+import com.xxl.job.core.util.JacksonTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -283,6 +284,14 @@ public class XxlJobServiceImpl implements XxlJobService {
 	public ReturnT<String> start(int id) {
 		XxlJobInfo xxlJobInfo = xxlJobInfoDao.loadById(id);
 
+		ReturnT<String> err = doStart(xxlJobInfo);
+		if (err != null) {
+			return err;
+		}
+		return ReturnT.SUCCESS;
+	}
+
+	private ReturnT<String> doStart(XxlJobInfo xxlJobInfo) {
 		// valid
 		ScheduleTypeEnum scheduleTypeEnum = ScheduleTypeEnum.match(xxlJobInfo.getScheduleType(), ScheduleTypeEnum.NONE);
 		if (ScheduleTypeEnum.NONE == scheduleTypeEnum) {
@@ -290,7 +299,7 @@ public class XxlJobServiceImpl implements XxlJobService {
 		}
 
 		// next trigger time (5s后生效，避开预读周期)
-		long nextTriggerTime = 0;
+		long nextTriggerTime;
 		try {
 			Date nextValidTime = JobScheduleHelper.generateNextValidTime(xxlJobInfo, new Date(System.currentTimeMillis() + JobScheduleHelper.PRE_READ_MS));
 			if (nextValidTime == null) {
@@ -308,7 +317,7 @@ public class XxlJobServiceImpl implements XxlJobService {
 
 		xxlJobInfo.setUpdateTime(new Date());
 		xxlJobInfoDao.update(xxlJobInfo);
-		return ReturnT.SUCCESS;
+		return null;
 	}
 
 	@Override
@@ -431,6 +440,51 @@ public class XxlJobServiceImpl implements XxlJobService {
 		result.put("triggerCountFailTotal", triggerCountFailTotal);
 
 		return new ReturnT<>(result);
+	}
+
+	@Override
+	public ReturnT<String> startAllJobByGroup(int jobGroup) {
+		final List<XxlJobInfo> list = xxlJobInfoDao.selectListByJobGroup(jobGroup);
+		int count = 0;
+		for (XxlJobInfo xxlJobInfo : list) {
+			if (xxlJobInfo.getTriggerStatus() == 0) {
+				ReturnT<String> err = doStart(xxlJobInfo);
+				if (err != null) {
+					return err;
+				}
+				count++;
+			}
+		}
+		if (count == 0) {
+			return new ReturnT<>(500, "无可待开启的任务");
+		}
+		return ReturnT.SUCCESS;
+	}
+
+	@Override
+	public ReturnT<String> stopAllJobByGroup(int jobGroup) {
+		final int rows = xxlJobInfoDao.closeAllOfGroup(jobGroup);
+		if (rows == 0) {
+			return new ReturnT<>(500, "无可停止的任务");
+		}
+		return ReturnT.SUCCESS;
+	}
+
+	@Override
+	public ReturnT<String> importAllJob(int jobGroup, String json) {
+		List<XxlJobInfo> xxlJobInfos = JacksonTool.readValue(json, List.class, XxlJobInfo.class);
+		for (XxlJobInfo xxlJobInfo : xxlJobInfos) {
+			xxlJobInfo.setJobGroup(jobGroup);
+			xxlJobInfo.setId(0);
+			xxlJobInfoDao.saveIgnore(xxlJobInfo);
+		}
+		return ReturnT.SUCCESS;
+	}
+
+	@Override
+	public ReturnT<List<XxlJobInfo>> exportAllJob(int jobGroup) {
+		List<XxlJobInfo> jobInfoList = xxlJobInfoDao.selectListByJobGroup(jobGroup);
+		return new ReturnT<>(jobInfoList);
 	}
 
 }
