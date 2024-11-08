@@ -1,15 +1,14 @@
 package com.xxl.job.admin.core.thread;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
 import com.xxl.job.admin.core.trigger.TriggerTypeEnum;
 import com.xxl.job.admin.core.trigger.XxlJobTrigger;
+import com.xxl.job.core.util.XxlJobTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
  * job trigger thread pool helper
@@ -21,9 +20,10 @@ public class JobTriggerPoolHelper {
 	private static final Logger logger = LoggerFactory.getLogger(JobTriggerPoolHelper.class);
 
 	// ---------------------- trigger pool ----------------------
+
 	// fast/slow thread pool
-	ThreadPoolTaskExecutor fastTriggerPool;
-	ThreadPoolTaskExecutor slowTriggerPool;
+	ThreadPoolExecutor fastTriggerPool;
+	ThreadPoolExecutor slowTriggerPool;
 	// job timeout count
 	volatile long minTim = System.currentTimeMillis() / 60000; // ms -> min
 	final ConcurrentMap<Integer, AtomicInteger> jobTimeoutCountMap = new ConcurrentHashMap<>();
@@ -31,35 +31,34 @@ public class JobTriggerPoolHelper {
 	public void start() {
 		XxlJobAdminConfig config = XxlJobAdminConfig.getAdminConfig();
 
-		fastTriggerPool = createExecutor(config.getTriggerPoolFastMax(), "xxl-job-fastTriggerPool-");
-		slowTriggerPool = createExecutor(config.getTriggerPoolSlowMax(), "xxl-job-slowTriggerPool-");
+		fastTriggerPool = createExecutor(config.getTriggerPoolFastMax(), 1000, "xxl-job-fastTriggerPool-");
+		slowTriggerPool = createExecutor(config.getTriggerPoolSlowMax(), 2000, "xxl-job-slowTriggerPool-");
 	}
 
-	static ThreadPoolTaskExecutor createExecutor(int max, String namePrefix) {
-		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-		executor.setCorePoolSize(10);
-		executor.setMaxPoolSize(max);
-		executor.setKeepAliveSeconds(60);
-		executor.setQueueCapacity(2000);
-		executor.setThreadNamePrefix(namePrefix);
-		executor.initialize();
-		return executor;
+	static ThreadPoolExecutor createExecutor(int maxPoolSize, int queueCapacity, String namePrefix) {
+		return new ThreadPoolExecutor(10, maxPoolSize, 60L, TimeUnit.SECONDS
+				, new LinkedBlockingQueue<>(queueCapacity)
+				, XxlJobTool.namedThreadFactory(namePrefix));
 	}
 
 	public void stop() {
-		// triggerPool.shutdown();
-		fastTriggerPool.shutdown();
-		slowTriggerPool.shutdown();
+		fastTriggerPool.shutdownNow();
+		slowTriggerPool.shutdownNow();
 		logger.info(">>>>>>>>> xxl-job trigger thread pool shutdown success.");
 	}
 
 	/**
 	 * add trigger
 	 */
-	public void addTrigger(final int jobId, final TriggerTypeEnum triggerType, final int failRetryCount, final String executorShardingParam, final String executorParam, final String addressList) {
+	public void addTrigger(final Integer jobId,
+	                       final TriggerTypeEnum triggerType,
+	                       final int failRetryCount,
+	                       final String executorShardingParam,
+	                       final String executorParam,
+	                       final String addressList) {
 
 		// choose thread pool
-		ThreadPoolTaskExecutor triggerPool_ = fastTriggerPool;
+		ThreadPoolExecutor triggerPool_ = fastTriggerPool;
 		AtomicInteger jobTimeoutCount = jobTimeoutCountMap.get(jobId);
 		if (jobTimeoutCount != null && jobTimeoutCount.get() > 10) {      // job-timeout 10 times in 1 min
 			triggerPool_ = slowTriggerPool;
@@ -67,7 +66,6 @@ public class JobTriggerPoolHelper {
 
 		// trigger
 		triggerPool_.execute(() -> {
-
 			long start = System.currentTimeMillis();
 
 			try {
@@ -76,7 +74,6 @@ public class JobTriggerPoolHelper {
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
 			} finally {
-
 				// check timeout-count-map
 				long minTim_now = System.currentTimeMillis() / 60000;
 				if (minTim != minTim_now) {

@@ -23,6 +23,7 @@ public class XxlJobRemotingUtil {
 
 	private static final Logger logger = LoggerFactory.getLogger(XxlJobRemotingUtil.class);
 	public static final String XXL_JOB_ACCESS_TOKEN = "XXL-JOB-ACCESS-TOKEN";
+	private static SSLSocketFactory sslSocketFactory;
 
 	public static final TypeReference<ReturnT<String>> stringTypeRef = new TypeReference<ReturnT<String>>() {
 	};
@@ -31,32 +32,37 @@ public class XxlJobRemotingUtil {
 
 	// trust-https start
 	private static void trustAllHosts(HttpsURLConnection connection) {
-		try {
-			SSLContext sc = SSLContext.getInstance("TLS");
-			sc.init(null, trustAllCerts, new java.security.SecureRandom());
-			SSLSocketFactory newFactory = sc.getSocketFactory();
+		// 内网一般是 http，无需直接静态初始化，需要时才懒加载并缓存工厂类
+		SSLSocketFactory socketFactory = sslSocketFactory;
+		if (socketFactory == null) {
+			try {
+				final SSLContext sslContext = SSLContext.getInstance("TLS");
+				sslContext.init(null, new TrustManager[] {
+						new X509TrustManager() {
+							@Override
+							public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+								return new java.security.cert.X509Certificate[] {};
+							}
 
-			connection.setSSLSocketFactory(newFactory);
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
+							@Override
+							public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+							}
+
+							@Override
+							public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+							}
+						}
+				}, new java.security.SecureRandom());
+				sslSocketFactory = socketFactory = sslContext.getSocketFactory();
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
+			}
+		}
+		if (socketFactory != null) {
+			connection.setSSLSocketFactory(socketFactory);
 		}
 		connection.setHostnameVerifier((hostname, session) -> true);
 	}
-
-	private static final TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
-		@Override
-		public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-			return new java.security.cert.X509Certificate[] {};
-		}
-
-		@Override
-		public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-		}
-
-		@Override
-		public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-		}
-	} };
 	// trust-https end
 
 	/**

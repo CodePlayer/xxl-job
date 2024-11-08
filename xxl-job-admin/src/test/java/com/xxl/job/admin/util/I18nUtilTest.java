@@ -14,13 +14,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class I18nUtilTest {
 
-    private static Logger logger = LoggerFactory.getLogger(I18nUtilTest.class);
+	private static Logger logger = LoggerFactory.getLogger(I18nUtilTest.class);
 
-    @Test
-    public void test() {
-        logger.info(I18nUtil.getString("admin_name"));
-        logger.info(I18nUtil.getMultiString("admin_name", "admin_name_full"));
-        logger.info(I18nUtil.getMultiString());
-    }
+	@Test
+	public void test() {
+		logger.info(I18nUtil.getString("admin_name"));
+		logger.info(I18nUtil.getMultiString("admin_name", "admin_name_full"));
+		logger.info(I18nUtil.getMultiString());
+	}
 
 }

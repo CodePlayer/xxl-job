@@ -1,6 +1,6 @@
 package com.xxl.job.core.glue;
 
-import org.apache.commons.lang3.EnumUtils;
+import com.xxl.job.core.util.XxlJobTool;
 
 /**
  * Created by xuxueli on 17/4/26.
@@ -44,7 +44,7 @@ public enum GlueTypeEnum {
 	}
 
 	public static GlueTypeEnum match(String name) {
-		return EnumUtils.getEnum(GlueTypeEnum.class, name);
+		return XxlJobTool.getEnum(GlueTypeEnum.class, name);
 	}
 
 }

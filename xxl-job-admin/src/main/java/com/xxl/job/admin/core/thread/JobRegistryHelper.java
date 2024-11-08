@@ -9,6 +9,7 @@ import com.xxl.job.admin.core.model.XxlJobRegistry;
 import com.xxl.job.core.biz.model.RegistryParam;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.enums.RegistryConfig;
+import com.xxl.job.core.util.XxlJobTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -33,7 +34,6 @@ public class JobRegistryHelper {
 	private volatile boolean toStop = false;
 
 	public void start() {
-
 		// for registry or remove
 		registryOrRemoveThreadPool = new ThreadPoolExecutor(
 				2,
@@ -41,7 +41,7 @@ public class JobRegistryHelper {
 				30L,
 				TimeUnit.SECONDS,
 				new LinkedBlockingQueue<>(2000),
-				r -> new Thread(r, "xxl-job, admin JobRegistryMonitorHelper-registryOrRemoveThreadPool-" + r.hashCode()),
+				XxlJobTool.namedThreadFactory("xxl-job-registryThreadPool-"),
 				(r, executor) -> {
 					r.run();
 					logger.warn(">>>>>>>>>>> xxl-job, registry or remove too fast, match threadpool rejected handler(run now).");

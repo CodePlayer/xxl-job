@@ -1,5 +1,6 @@
 package com.xxl.job.admin.core.util;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -18,7 +19,6 @@ public class LocalCacheUtil {
 	 * set cache
 	 */
 	public static boolean set(String key, Object val, long cacheTime) {
-
 		// clean timeout cache, before set new cache (avoid cache too much)
 		cleanTimeoutCache();
 
@@ -26,15 +26,12 @@ public class LocalCacheUtil {
 		if (!StringUtils.hasText(key)) {
 			return false;
 		}
-		if (val == null) {
-			remove(key);
-		}
-		if (cacheTime <= 0) {
+		if (val == null || cacheTime <= 0) {
 			remove(key);
 		}
 		long timeoutTime = System.currentTimeMillis() + cacheTime;
-		LocalCacheData localCacheData = new LocalCacheData(key, val, timeoutTime);
-		cacheRepository.put(localCacheData.getKey(), localCacheData);
+		LocalCacheData item = new LocalCacheData(val, timeoutTime);
+		cacheRepository.put(key, item);
 		return true;
 	}
 
@@ -56,24 +53,28 @@ public class LocalCacheUtil {
 		if (!StringUtils.hasText(key)) {
 			return null;
 		}
-		LocalCacheData localCacheData = cacheRepository.get(key);
-		if (localCacheData != null && System.currentTimeMillis() < localCacheData.getTimeoutTime()) {
-			return localCacheData.getVal();
-		} else {
-			remove(key);
-			return null;
+		LocalCacheData item = cacheRepository.get(key);
+		if (item != null) {
+			if (System.currentTimeMillis() < item.timeoutTime) {
+				return item.val;
+			}
+			cacheRepository.remove(key);
 		}
+		return null;
 	}
 
 	/**
 	 * clean timeout cache
 	 */
 	public static boolean cleanTimeoutCache() {
-		if (!cacheRepository.keySet().isEmpty()) {
-			for (String key : cacheRepository.keySet()) {
-				LocalCacheData localCacheData = cacheRepository.get(key);
-				if (localCacheData != null && System.currentTimeMillis() >= localCacheData.getTimeoutTime()) {
-					cacheRepository.remove(key);
+		if (!cacheRepository.isEmpty()) {
+			final long now = System.currentTimeMillis();
+			for (Map.Entry<String, LocalCacheData> entry : cacheRepository.entrySet()) {
+				LocalCacheData item = entry.getValue();
+				if (item != null) {
+					if (now >= item.timeoutTime) {
+						cacheRepository.remove(entry.getKey());
+					}
 				}
 			}
 		}
@@ -82,40 +83,11 @@ public class LocalCacheUtil {
 
 	private static class LocalCacheData {
 
-		private String key;
-		private Object val;
-		private long timeoutTime;
+		Object val;
+		long timeoutTime;
 
-		public LocalCacheData() {
-		}
-
-		public LocalCacheData(String key, Object val, long timeoutTime) {
-			this.key = key;
+		public LocalCacheData(Object val, long timeoutTime) {
 			this.val = val;
-			this.timeoutTime = timeoutTime;
-		}
-
-		public String getKey() {
-			return key;
-		}
-
-		public void setKey(String key) {
-			this.key = key;
-		}
-
-		public Object getVal() {
-			return val;
-		}
-
-		public void setVal(Object val) {
-			this.val = val;
-		}
-
-		public long getTimeoutTime() {
-			return timeoutTime;
-		}
-
-		public void setTimeoutTime(long timeoutTime) {
 			this.timeoutTime = timeoutTime;
 		}
 

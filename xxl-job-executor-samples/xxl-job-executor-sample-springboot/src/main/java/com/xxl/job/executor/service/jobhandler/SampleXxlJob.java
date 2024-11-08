@@ -125,7 +125,7 @@ public class SampleXxlJob {
 
 		// param parse
 		String param = XxlJobHelper.getJobParam();
-        if (!StringUtils.hasText(param)) {
+		if (!StringUtils.hasText(param)) {
 			XxlJobHelper.log("param[" + param + "] invalid.");
 
 			XxlJobHelper.handleFail();

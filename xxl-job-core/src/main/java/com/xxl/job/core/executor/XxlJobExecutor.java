@@ -122,10 +122,10 @@ public class XxlJobExecutor {
 	private void initAdminBizList(String adminAddresses, String accessToken) throws Exception {
 		if (StringUtils.hasText(adminAddresses)) {
 			for (String address : adminAddresses.trim().split(",")) {
-                address = address.trim();
-                if (!address.isEmpty()) {
+				address = address.trim();
+				if (!address.isEmpty()) {
 
-                    AdminBiz adminBiz = new AdminBizClient(address, accessToken);
+					AdminBiz adminBiz = new AdminBizClient(address, accessToken);
 
 					if (adminBizList == null) {
 						adminBizList = new ArrayList<>();
@@ -152,7 +152,7 @@ public class XxlJobExecutor {
 		// generate address
 		if (!StringUtils.hasText(address)) {
 			String ip_port_address = IpUtil.getIpPort(ip, port);   // registry-address：default use address to registry , otherwise use ip:port if address is null
-            address = "http://" + ip_port_address + "/";
+			address = "http://" + ip_port_address + "/";
 		}
 
 		// accessToken
