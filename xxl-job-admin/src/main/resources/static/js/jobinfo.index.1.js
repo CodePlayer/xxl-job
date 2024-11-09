@@ -237,7 +237,6 @@ $(function () {
 				success: function (data) {
 					if (data.code == 200) {
 						layer.msg(I18n.system_success);
-						//window.location.reload();
 						jobTable.fnDraw(false);
 					} else {
 						layer.msg(data.msg);
