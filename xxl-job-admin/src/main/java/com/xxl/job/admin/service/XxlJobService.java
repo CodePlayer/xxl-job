@@ -21,12 +21,12 @@ public interface XxlJobService {
 	/**
 	 * add job
 	 */
-	ReturnT<String> add(XxlJobInfo jobInfo);
+	ReturnT<String> add(XxlJobInfo jobInfo, XxlJobUser loginUser);
 
 	/**
 	 * update job
 	 */
-	ReturnT<String> update(XxlJobInfo jobInfo);
+	ReturnT<String> update(XxlJobInfo jobInfo, XxlJobUser loginUser);
 
 	/**
 	 * remove job
