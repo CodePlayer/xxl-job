@@ -1,6 +1,7 @@
 package com.xxl.job.admin.controller;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
@@ -8,6 +9,7 @@ import com.xxl.job.admin.controller.annotation.PermissionLimit;
 import com.xxl.job.admin.core.model.XxlJobGroup;
 import com.xxl.job.admin.core.model.XxlJobUser;
 import com.xxl.job.admin.core.util.I18nUtil;
+import com.xxl.job.admin.core.util.ModelUtil;
 import com.xxl.job.admin.dao.XxlJobGroupDao;
 import com.xxl.job.admin.dao.XxlJobUserDao;
 import com.xxl.job.admin.service.LoginService;
@@ -49,7 +51,10 @@ public class UserController {
 
 		// page list
 		List<XxlJobUser> list = xxlJobUserDao.pageList(start, length, username, role);
-		int list_count = xxlJobUserDao.pageListCount(start, length, username, role);
+		int totalCount = ModelUtil.calcTotalCount(list, start, length);
+		if (totalCount == -1) {
+			totalCount = xxlJobUserDao.pageListCount(start, length, username, role);
+		}
 
 		// filter
 		if (!list.isEmpty()) { // MyBatis 返回的 List 不会为 null
@@ -58,12 +63,7 @@ public class UserController {
 			}
 		}
 
-		// package result
-		Map<String, Object> maps = new HashMap<>(4, 1F);
-		maps.put("recordsTotal", list_count);        // 总记录数
-		maps.put("recordsFiltered", list_count);    // 过滤后的总记录数
-		maps.put("data", list);                    // 分页列表
-		return maps;
+		return ModelUtil.pageListResult(list, totalCount);
 	}
 
 	@RequestMapping("/add")
