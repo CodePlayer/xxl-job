@@ -2,7 +2,7 @@ package com.xxl.job.admin.controller;
 
 import javax.servlet.http.Cookie;
 
-import com.xxl.job.admin.service.LoginService;
+import com.xxl.job.admin.service.impl.LoginService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
