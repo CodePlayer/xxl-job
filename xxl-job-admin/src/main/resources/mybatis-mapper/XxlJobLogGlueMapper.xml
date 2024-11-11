@@ -5,12 +5,12 @@
 	
 	<resultMap id="XxlJobLogGlue" type="com.xxl.job.admin.core.model.XxlJobLogGlue" >
 		<result column="id" property="id" />
-	    <result column="job_id" property="jobId" />
+		<result column="job_id" property="jobId" />
 		<result column="glue_type" property="glueType" />
-	    <result column="glue_source" property="glueSource" />
-	    <result column="glue_remark" property="glueRemark" />
-	    <result column="add_time" property="addTime" />
-	    <result column="update_time" property="updateTime" />
+		<result column="glue_source" property="glueSource" />
+		<result column="glue_remark" property="glueRemark" />
+		<result column="add_time" property="addTime" />
+		<result column="update_time" property="updateTime" />
 	</resultMap>
 
 	<sql id="Base_Column_List">

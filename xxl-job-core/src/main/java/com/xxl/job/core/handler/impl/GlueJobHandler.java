@@ -10,8 +10,8 @@ import com.xxl.job.core.handler.IJobHandler;
  */
 public class GlueJobHandler extends IJobHandler {
 
-	private long glueUpdatetime;
-	private IJobHandler jobHandler;
+	final long glueUpdatetime;
+	final IJobHandler jobHandler;
 
 	public GlueJobHandler(IJobHandler jobHandler, long glueUpdatetime) {
 		this.jobHandler = jobHandler;

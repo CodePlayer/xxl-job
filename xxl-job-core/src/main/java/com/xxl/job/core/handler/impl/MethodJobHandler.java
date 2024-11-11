@@ -11,8 +11,8 @@ public class MethodJobHandler extends IJobHandler {
 
 	private final Object target;
 	private final Method method;
-	private Method initMethod;
-	private Method destroyMethod;
+	private final Method initMethod;
+	private final Method destroyMethod;
 
 	public MethodJobHandler(Object target, Method method, Method initMethod, Method destroyMethod) {
 		this.target = target;

@@ -15,7 +15,7 @@ import com.xxl.job.core.biz.model.TriggerParam;
  */
 public class ExecutorRouteRound extends ExecutorRouter {
 
-	private static ConcurrentMap<Integer, AtomicInteger> routeCountEachJob = new ConcurrentHashMap<>();
+	private static final ConcurrentMap<Integer, AtomicInteger> routeCountEachJob = new ConcurrentHashMap<>();
 	private static long CACHE_VALID_TIME = 0;
 
 	private static int count(int jobId) {

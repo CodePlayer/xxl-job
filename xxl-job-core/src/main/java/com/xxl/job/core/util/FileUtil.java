@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  */
 public class FileUtil {
 
-	private static Logger logger = LoggerFactory.getLogger(FileUtil.class);
+	private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
 	/**
 	 * delete recursively

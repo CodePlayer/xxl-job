@@ -314,7 +314,6 @@ $(function () {
 		});
 	});
 
-
 	// jobGroup change
 	$('#jobGroup').on('change', function () {
 		//reload

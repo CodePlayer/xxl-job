@@ -5,8 +5,8 @@
 	
 	<resultMap id="XxlJobGroup" type="com.xxl.job.admin.core.model.XxlJobGroup" >
 		<result column="id" property="id" />
-	    <result column="app_name" property="appname" />
-	    <result column="title" property="title" />
+		<result column="app_name" property="appname" />
+		<result column="title" property="title" />
 		<result column="address_type" property="addressType" />
 		<result column="address_list" property="addressList" />
 		<result column="update_time" property="updateTime" />

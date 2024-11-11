@@ -5,10 +5,10 @@
 	
 	<resultMap id="XxlJobLogReport" type="com.xxl.job.admin.core.model.XxlJobLogReport" >
 		<result column="id" property="id" />
-	    <result column="trigger_day" property="triggerDay" />
+		<result column="trigger_day" property="triggerDay" />
 		<result column="running_count" property="runningCount" />
-	    <result column="suc_count" property="sucCount" />
-	    <result column="fail_count" property="failCount" />
+		<result column="suc_count" property="sucCount" />
+		<result column="fail_count" property="failCount" />
 	</resultMap>
 
 	<sql id="Base_Column_List">
@@ -37,12 +37,12 @@
 	</insert>
 
 	<update id="update" >
-        UPDATE xxl_job_log_report
-        SET `running_count` = #{runningCount},
-        	`suc_count` = #{sucCount},
-        	`fail_count` = #{failCount}
-        WHERE `trigger_day` = #{triggerDay}
-    </update>
+		UPDATE xxl_job_log_report
+		SET `running_count` = #{runningCount},
+			`suc_count` = #{sucCount},
+			`fail_count` = #{failCount}
+		WHERE `trigger_day` = #{triggerDay}
+	</update>
 
 	<select id="queryLogReport" resultMap="XxlJobLogReport">
 		SELECT <include refid="Base_Column_List" />

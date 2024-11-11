@@ -50,7 +50,6 @@ public class XxlJobServiceImpl implements XxlJobService {
 
 	@Override
 	public Map<String, Object> pageList(int start, int length, int jobGroup, int triggerStatus, String jobDesc, String executorHandler, String author) {
-
 		// page list
 		List<XxlJobInfo> list = xxlJobInfoDao.pageList(start, length, jobGroup, triggerStatus, jobDesc, executorHandler, author);
 		for (XxlJobInfo xxlJobInfo : list) {

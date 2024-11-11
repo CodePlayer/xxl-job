@@ -12,7 +12,7 @@ import com.xxl.job.core.biz.model.TriggerParam;
  */
 public class ExecutorRouteRandom extends ExecutorRouter {
 
-	private static Random localRandom = new Random();
+	private static final Random localRandom = new Random();
 
 	@Override
 	public ReturnT<String> route(TriggerParam triggerParam, List<String> addressList) {

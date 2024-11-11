@@ -261,7 +261,7 @@
 
 					<input type="hidden" name="glueRemark" value="GLUE代码初始化" >
 					<textarea name="glueSource" style="display:none;" ></textarea>
-					<textarea class="glueSource_java" style="display:none;" >
+<textarea class="glueSource_java" style="display:none;" >
 package com.xxl.job.service.handler;
 
 import com.xxl.job.core.context.XxlJobHelper;
@@ -276,7 +276,7 @@ public class DemoGlueJobHandler extends IJobHandler {
 
 }
 </textarea>
-					<textarea class="glueSource_shell" style="display:none;" >
+<textarea class="glueSource_shell" style="display:none;" >
 #!/bin/bash
 echo "xxl-job: hello shell"
 
@@ -294,7 +294,7 @@ done-->
 echo "Good bye!"
 exit 0
 </textarea>
-					<textarea class="glueSource_python" style="display:none;" >
+<textarea class="glueSource_python" style="display:none;" >
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 import time
@@ -318,8 +318,8 @@ logging.basicConfig(level=logging.DEBUG)
 logging.info("脚本文件：" + sys.argv[0])
 -->
 </textarea>
-					<#--这里有问题，新建一个运行模式为 php 的任务后，GLUE 中没有下边的 php 代码-->
-					<textarea class="glueSource_php" style="display:none;" >
+<#--这里有问题，新建一个运行模式为 php 的任务后，GLUE 中没有下边的 php 代码-->
+<textarea class="glueSource_php" style="display:none;" >
 <?php
 
 	echo "xxl-job: hello php  \n";
@@ -334,7 +334,7 @@ logging.info("脚本文件：" + sys.argv[0])
 
 ?>
 </textarea>
-					<textarea class="glueSource_nodejs" style="display:none;" >
+<textarea class="glueSource_nodejs" style="display:none;" >
 #!/usr/bin/env node
 console.log("xxl-job: hello nodejs")
 
@@ -351,7 +351,7 @@ console.log("${I18n.jobinfo_shard_total}: " + arguments[4])
 console.log("Good bye!")
 process.exit(0)
 </textarea>
-					<textarea class="glueSource_powershell" style="display:none;" >
+<textarea class="glueSource_powershell" style="display:none;" >
 Write-Host "xxl-job: hello powershell"
 
 Write-Host "${I18n.jobinfo_script_location}: " $MyInvocation.MyCommand.Definition
