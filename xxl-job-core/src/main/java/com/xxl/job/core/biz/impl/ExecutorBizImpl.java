@@ -52,7 +52,7 @@ public class ExecutorBizImpl implements ExecutorBiz {
 		String removeOldReason = null;
 
 		// valid：jobHandler + jobThread
-		GlueTypeEnum glueTypeEnum = GlueTypeEnum.match(triggerParam.getGlueType());
+		final GlueTypeEnum glueTypeEnum = GlueTypeEnum.match(triggerParam.getGlueType());
 		if (GlueTypeEnum.BEAN == glueTypeEnum) {
 
 			// new jobhandler
@@ -76,7 +76,7 @@ public class ExecutorBizImpl implements ExecutorBiz {
 			}
 
 		} else if (GlueTypeEnum.GLUE_GROOVY == glueTypeEnum) {
-
+			// 【注意】如需使用，请将 groovy 依赖从 可选 改为 必需
 			// valid old jobThread
 			if (jobThread != null &&
 					!(jobThread.getHandler() instanceof GlueJobHandler

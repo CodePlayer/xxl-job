@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 
 /**
@@ -28,7 +29,8 @@ public class SpringGlueFactory extends GlueFactory {
 			return;
 		}
 
-		if (XxlJobSpringExecutor.getApplicationContext() == null) {
+		final ApplicationContext context = XxlJobSpringExecutor.getApplicationContext();
+		if (context == null) {
 			return;
 		}
 
@@ -45,21 +47,21 @@ public class SpringGlueFactory extends GlueFactory {
 			if (resource != null) {
 				try {
 					if (!resource.name().isEmpty()) {
-						fieldBean = XxlJobSpringExecutor.getApplicationContext().getBean(resource.name());
+						fieldBean = context.getBean(resource.name());
 					} else {
-						fieldBean = XxlJobSpringExecutor.getApplicationContext().getBean(field.getName());
+						fieldBean = context.getBean(field.getName());
 					}
 				} catch (Exception ignored) {
 				}
 				if (fieldBean == null) {
-					fieldBean = XxlJobSpringExecutor.getApplicationContext().getBean(field.getType());
+					fieldBean = context.getBean(field.getType());
 				}
 			} else if (AnnotationUtils.getAnnotation(field, Autowired.class) != null) {
 				Qualifier qualifier = AnnotationUtils.getAnnotation(field, Qualifier.class);
 				if (qualifier != null && !qualifier.value().isEmpty()) {
-					fieldBean = XxlJobSpringExecutor.getApplicationContext().getBean(qualifier.value());
+					fieldBean = context.getBean(qualifier.value());
 				} else {
-					fieldBean = XxlJobSpringExecutor.getApplicationContext().getBean(field.getType());
+					fieldBean = context.getBean(field.getType());
 				}
 			}
 
