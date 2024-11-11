@@ -40,6 +40,7 @@
 			<groupId>org.apache.groovy</groupId>
 			<artifactId>groovy</artifactId>
 			<version>${groovy.version}</version>
+			<optional>true</optional> <!-- 改为可选，一般用不到，有需要再打开 -->
 		</dependency>
 
 		<!-- spring-context -->

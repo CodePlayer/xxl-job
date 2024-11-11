@@ -4,7 +4,6 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import com.xxl.job.core.executor.XxlJobExecutor;
-import com.xxl.job.core.glue.GlueFactory;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +23,7 @@ import org.springframework.core.annotation.AnnotatedElementUtils;
 public class XxlJobSpringExecutor extends XxlJobExecutor implements ApplicationContextAware, SmartInitializingSingleton, ApplicationListener<ContextClosedEvent> {
 
 	private static final Logger logger = LoggerFactory.getLogger(XxlJobSpringExecutor.class);
+	public static volatile boolean groovyRefreshRequired;
 
 	// start
 	@Override
@@ -36,7 +36,7 @@ public class XxlJobSpringExecutor extends XxlJobExecutor implements ApplicationC
 		initJobHandlerMethodRepository(applicationContext);
 
 		// refresh GlueFactory
-		GlueFactory.refreshInstance(1);
+		groovyRefreshRequired = true;
 
 		// super start
 		try {
@@ -46,27 +46,29 @@ public class XxlJobSpringExecutor extends XxlJobExecutor implements ApplicationC
 		}
 	}
 
-    /*private void initJobHandlerRepository(ApplicationContext applicationContext) {
-        if (applicationContext == null) {
-            return;
-        }
+	/*
+	private void initJobHandlerRepository(ApplicationContext applicationContext) {
+		if (applicationContext == null) {
+			return;
+		}
 
-        // init job handler action
-        Map<String, Object> serviceBeanMap = applicationContext.getBeansWithAnnotation(JobHandler.class);
+		// init job handler action
+		Map<String, Object> serviceBeanMap = applicationContext.getBeansWithAnnotation(JobHandler.class);
 
-        if (serviceBeanMap != null && serviceBeanMap.size() > 0) {
-            for (Object serviceBean : serviceBeanMap.values()) {
-                if (serviceBean instanceof IJobHandler) {
-                    String name = serviceBean.getClass().getAnnotation(JobHandler.class).value();
-                    IJobHandler handler = (IJobHandler) serviceBean;
-                    if (loadJobHandler(name) != null) {
-                        throw new RuntimeException("xxl-job jobhandler[" + name + "] naming conflicts.");
-                    }
-                    registJobHandler(name, handler);
-                }
-            }
-        }
-    }*/
+		if (!serviceBeanMap.isEmpty()) {
+			for (Object serviceBean : serviceBeanMap.values()) {
+				if (serviceBean instanceof IJobHandler) {
+					String name = serviceBean.getClass().getAnnotation(JobHandler.class).value();
+					IJobHandler handler = (IJobHandler) serviceBean;
+					if (loadJobHandler(name) != null) {
+						throw new RuntimeException("xxl-job jobhandler[" + name + "] naming conflicts.");
+					}
+					registJobHandler(name, handler);
+				}
+			}
+		}
+	}
+	*/
 
 	private void initJobHandlerMethodRepository(ApplicationContext applicationContext) {
 		if (applicationContext == null) {
@@ -86,8 +88,7 @@ public class XxlJobSpringExecutor extends XxlJobExecutor implements ApplicationC
 			// filter method
 			Map<Method, XxlJob> annotatedMethods = null;   // referred to ：org.springframework.context.event.EventListenerMethodProcessor.processBean
 			try {
-				annotatedMethods = MethodIntrospector.selectMethods(bean.getClass(),
-						(MethodIntrospector.MetadataLookup<XxlJob>) method -> AnnotatedElementUtils.findMergedAnnotation(method, XxlJob.class));
+				annotatedMethods = MethodIntrospector.selectMethods(bean.getClass(), (MethodIntrospector.MetadataLookup<XxlJob>) method -> AnnotatedElementUtils.findMergedAnnotation(method, XxlJob.class));
 			} catch (Throwable ex) {
 				logger.error("xxl-job method-jobhandler resolve error for bean[" + beanDefinitionName + "].", ex);
 			}
