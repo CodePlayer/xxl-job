@@ -74,12 +74,13 @@
 				<div class="col-xs-1">
 					<button class="btn btn-block btn-info" id="exportAllJob">导出</button>
 				</div>
-				<div class="col-xs-1">
+				<div class="col-xs-2">
 					<div class="input-group">
-						<input type="text" class="form-control" id="importJson" placeholder="导入json" >
+						<input type="text" class="form-control" id="importJson" placeholder="导入JSON" >
+						<span class="input-group-btn">
+							<button class="btn btn-block btn-info" id="importJob" >导入</button>
+						</span>
 					</div>
-
-					<button class="btn btn-block btn-info" id="importJob" >导入</button>
 				</div>
 			</div>
 
