@@ -4,7 +4,7 @@ import java.text.MessageFormat;
 import java.util.*;
 import javax.annotation.Resource;
 
-import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSON;
 import com.xxl.job.admin.core.complete.XxlJobCompleter;
 import com.xxl.job.admin.core.cron.CronExpression;
 import com.xxl.job.admin.core.model.*;
@@ -474,7 +474,7 @@ public class XxlJobServiceImpl implements XxlJobService {
 
 	@Override
 	public ReturnT<String> importAllJob(int jobGroup, String json) {
-		List<XxlJobInfo> xxlJobInfos = JSONArray.parseArray(json, XxlJobInfo.class);
+		List<XxlJobInfo> xxlJobInfos = JSON.parseArray(json, XxlJobInfo.class);
 		for (XxlJobInfo xxlJobInfo : xxlJobInfos) {
 			xxlJobInfo.setJobGroup(jobGroup);
 			xxlJobInfo.setId(0);
