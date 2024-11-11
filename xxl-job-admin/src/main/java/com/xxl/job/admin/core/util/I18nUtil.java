@@ -54,16 +54,20 @@ public class I18nUtil {
 	 * get multi val of i18n multi key, as json
 	 */
 	public static String getMultiString(String... keys) {
-		Map<String, String> map = new HashMap<>();
+		final Map<String, String> map;
 
 		Properties prop = loadI18nProp();
 		if (keys != null && keys.length > 0) {
+			map = new HashMap<>(keys.length, 1F);
 			for (String key : keys) {
 				map.put(key, prop.getProperty(key));
 			}
 		} else {
-			for (String key : prop.stringPropertyNames()) {
-				map.put(key, prop.getProperty(key));
+			map = new HashMap<>(prop.size());
+			for (Map.Entry<Object, Object> entry : prop.entrySet()) {
+				if (entry.getKey() instanceof String && entry.getValue() instanceof String) {
+					map.put((String) entry.getKey(), (String) entry.getValue());
+				}
 			}
 		}
 		return JSON.toJSONString(map);
