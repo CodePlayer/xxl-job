@@ -6,9 +6,9 @@
 	<resultMap id="XxlJobUser" type="com.xxl.job.admin.core.model.XxlJobUser" >
 		<result column="id" property="id" />
 		<result column="username" property="username" />
-	    <result column="password" property="password" />
-	    <result column="role" property="role" />
-	    <result column="permission" property="permission" />
+		<result column="password" property="password" />
+		<result column="role" property="role" />
+		<result column="permission" property="permission" />
 	</resultMap>
 
 	<sql id="Base_Column_List">

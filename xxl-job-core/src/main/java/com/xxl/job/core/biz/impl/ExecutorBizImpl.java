@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ExecutorBizImpl implements ExecutorBiz {
 
-	private static Logger logger = LoggerFactory.getLogger(ExecutorBizImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(ExecutorBizImpl.class);
 
 	@Override
 	public ReturnT<String> beat() {

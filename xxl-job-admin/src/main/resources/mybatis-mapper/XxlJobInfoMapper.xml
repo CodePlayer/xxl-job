@@ -7,13 +7,13 @@
 		<result column="id" property="id" />
 
 		<result column="job_group" property="jobGroup" />
-	    <result column="job_desc" property="jobDesc" />
+		<result column="job_desc" property="jobDesc" />
 
-	    <result column="add_time" property="addTime" />
-	    <result column="update_time" property="updateTime" />
+		<result column="add_time" property="addTime" />
+		<result column="update_time" property="updateTime" />
 
-	    <result column="author" property="author" />
-	    <result column="alarm_email" property="alarmEmail" />
+		<result column="author" property="author" />
+		<result column="alarm_email" property="alarmEmail" />
 
 		<result column="schedule_type" property="scheduleType" />
 		<result column="schedule_conf" property="scheduleConf" />
@@ -21,14 +21,14 @@
 
 		<result column="executor_route_strategy" property="executorRouteStrategy" />
 		<result column="executor_handler" property="executorHandler" />
-	    <result column="executor_param" property="executorParam" />
+		<result column="executor_param" property="executorParam" />
 		<result column="executor_block_strategy" property="executorBlockStrategy" />
 		<result column="executor_timeout" property="executorTimeout" />
 		<result column="executor_fail_retry_count" property="executorFailRetryCount" />
 
-	    <result column="glue_type" property="glueType" />
-	    <result column="glue_source" property="glueSource" />
-	    <result column="glue_remark" property="glueRemark" />
+		<result column="glue_type" property="glueType" />
+		<result column="glue_source" property="glueSource" />
+		<result column="glue_remark" property="glueRemark" />
 		<result column="glue_updatetime" property="glueUpdatetime" />
 
 		<result column="child_jobid" property="childJobId" />
@@ -72,9 +72,9 @@
 			<if test="jobGroup gt 0">
 				AND t.job_group = #{jobGroup}
 			</if>
-            <if test="triggerStatus gte 0">
-                AND t.trigger_status = #{triggerStatus}
-            </if>
+			<if test="triggerStatus gte 0">
+				AND t.trigger_status = #{triggerStatus}
+			</if>
 			<if test="jobDesc != null and jobDesc != ''">
 				AND t.job_desc like CONCAT(CONCAT('%', #{jobDesc}), '%')
 			</if>
@@ -96,9 +96,9 @@
 			<if test="jobGroup gt 0">
 				AND t.job_group = #{jobGroup}
 			</if>
-            <if test="triggerStatus gte 0">
-                AND t.trigger_status = #{triggerStatus}
-            </if>
+			<if test="triggerStatus gte 0">
+				AND t.trigger_status = #{triggerStatus}
+			</if>
 			<if test="jobDesc != null and jobDesc != ''">
 				AND t.job_desc like CONCAT(CONCAT('%', #{jobDesc}), '%')
 			</if>
@@ -122,7 +122,7 @@
 			schedule_type,
 			schedule_conf,
 			misfire_strategy,
-            executor_route_strategy,
+			executor_route_strategy,
 			executor_handler,
 			executor_param,
 			executor_block_strategy,

@@ -9,11 +9,10 @@ import com.xxl.job.core.handler.annotation.XxlJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.SmartInitializingSingleton;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.*;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.core.MethodIntrospector;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 
@@ -22,7 +21,7 @@ import org.springframework.core.annotation.AnnotatedElementUtils;
  *
  * @author xuxueli 2018-11-01 09:24:52
  */
-public class XxlJobSpringExecutor extends XxlJobExecutor implements ApplicationContextAware, SmartInitializingSingleton, DisposableBean {
+public class XxlJobSpringExecutor extends XxlJobExecutor implements ApplicationContextAware, SmartInitializingSingleton, ApplicationListener<ContextClosedEvent> {
 
 	private static final Logger logger = LoggerFactory.getLogger(XxlJobSpringExecutor.class);
 
@@ -46,13 +45,6 @@ public class XxlJobSpringExecutor extends XxlJobExecutor implements ApplicationC
 			throw new RuntimeException(e);
 		}
 	}
-
-	// destroy
-	@Override
-	public void destroy() {
-		super.destroy();
-	}
-
 
     /*private void initJobHandlerRepository(ApplicationContext applicationContext) {
         if (applicationContext == null) {
@@ -126,13 +118,9 @@ public class XxlJobSpringExecutor extends XxlJobExecutor implements ApplicationC
 		return applicationContext;
 	}
 
-    /*
-    BeanDefinitionRegistryPostProcessor
-    registry.getBeanDefine()
-    @Override
-    public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
-        this.registry = registry;
-    }
-    * */
+	@Override
+	public void onApplicationEvent(ContextClosedEvent event) {
+		destroy();
+	}
 
 }

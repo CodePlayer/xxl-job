@@ -11,6 +11,7 @@ import com.xxl.job.admin.core.util.I18nUtil;
 import com.xxl.job.core.biz.model.ReturnT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -23,7 +24,7 @@ import org.springframework.util.StringUtils;
 @Component
 public class EmailJobAlarm implements JobAlarm {
 
-	private static Logger logger = LoggerFactory.getLogger(EmailJobAlarm.class);
+	static final Logger logger = LoggerFactory.getLogger(EmailJobAlarm.class);
 
 	/**
 	 * fail alarm
@@ -33,6 +34,11 @@ public class EmailJobAlarm implements JobAlarm {
 		boolean alarmResult = true;
 		// send monitor email
 		if (info != null && StringUtils.hasText(info.getAlarmEmail())) {
+			final XxlJobAdminConfig adminConfig = XxlJobAdminConfig.getAdminConfig();
+			JavaMailSender mailSender = adminConfig.getMailSender();
+			if (mailSender == null) {
+				return true;
+			}
 			// alarmContent
 			String alarmContent = "Alarm Job LogId=" + jobLog.getId();
 			if (jobLog.getTriggerCode() != ReturnT.SUCCESS_CODE) {
@@ -43,7 +49,6 @@ public class EmailJobAlarm implements JobAlarm {
 			}
 
 			// email info
-			final XxlJobAdminConfig adminConfig = XxlJobAdminConfig.getAdminConfig();
 			XxlJobGroup group = adminConfig.getXxlJobGroupDao().load(info.getJobGroup());
 			String personal = I18nUtil.getString("admin_name_full");
 			String title = I18nUtil.getString("jobconf_monitor");
@@ -57,7 +62,7 @@ public class EmailJobAlarm implements JobAlarm {
 			for (String email : emailSet) {
 				// make mail
 				try {
-					MimeMessage mimeMessage = adminConfig.getMailSender().createMimeMessage();
+					MimeMessage mimeMessage = mailSender.createMimeMessage();
 
 					MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
 					helper.setFrom(adminConfig.getEmailFrom(), personal);
@@ -65,7 +70,7 @@ public class EmailJobAlarm implements JobAlarm {
 					helper.setSubject(title);
 					helper.setText(content, true);
 
-					adminConfig.getMailSender().send(mimeMessage);
+					mailSender.send(mimeMessage);
 				} catch (Exception e) {
 					logger.error(">>>>>>>>>>> xxl-job, job fail alarm email send error, JobLogId:{}", jobLog.getId(), e);
 

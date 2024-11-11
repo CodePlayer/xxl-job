@@ -17,7 +17,7 @@ import com.xxl.job.core.biz.model.TriggerParam;
  */
 public class ExecutorRouteLFU extends ExecutorRouter {
 
-	private static ConcurrentMap<Integer, HashMap<String, Integer>> jobLfuMap = new ConcurrentHashMap<>();
+	private static final ConcurrentMap<Integer, HashMap<String, Integer>> jobLfuMap = new ConcurrentHashMap<>();
 	private static long CACHE_VALID_TIME = 0;
 
 	public String route(int jobId, List<String> addressList) {
