@@ -14,6 +14,7 @@ import com.xxl.job.admin.core.thread.JobScheduleHelper;
 import com.xxl.job.admin.core.thread.JobTriggerPoolHelper;
 import com.xxl.job.admin.core.trigger.TriggerTypeEnum;
 import com.xxl.job.admin.core.util.I18nUtil;
+import com.xxl.job.admin.core.util.ModelUtil;
 import com.xxl.job.admin.dao.*;
 import com.xxl.job.admin.service.XxlJobService;
 import com.xxl.job.core.biz.model.ReturnT;
@@ -52,14 +53,12 @@ public class XxlJobServiceImpl implements XxlJobService {
 
 		// page list
 		List<XxlJobInfo> list = xxlJobInfoDao.pageList(start, length, jobGroup, triggerStatus, jobDesc, executorHandler, author);
-		int list_count = xxlJobInfoDao.pageListCount(start, length, jobGroup, triggerStatus, jobDesc, executorHandler, author);
+		int totalCount = ModelUtil.calcTotalCount(list, start, length);
+		if (totalCount == -1) {
+			totalCount = xxlJobInfoDao.pageListCount(start, length, jobGroup, triggerStatus, jobDesc, executorHandler, author);
+		}
 
-		// package result
-		Map<String, Object> maps = new HashMap<>(4, 1F);
-		maps.put("recordsTotal", list_count);        // 总记录数
-		maps.put("recordsFiltered", list_count);    // 过滤后的总记录数
-		maps.put("data", list);                    // 分页列表
-		return maps;
+		return ModelUtil.pageListResult(list, totalCount);
 	}
 
 	@Override
