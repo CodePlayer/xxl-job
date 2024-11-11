@@ -93,22 +93,8 @@ $(function () {
 					return data ? moment(new Date(data)).format("YYYY-MM-DD HH:mm:ss") : "";
 				}
 			},
-			{
-				"data": 'executorRouteStrategy',
-				"visible": true,
-				"width": '10%',
-				"render": function (data, type, row) {
-					return row.executorRouteStrategy;
-				}
-			},
-			{
-				"data": 'executorBlockStrategy',
-				"visible": true,
-				"width": '10%',
-				"render": function (data, type, row) {
-					return row.executorBlockStrategy;
-				}
-			},
+			{ "data": 'executorRouteStrategy', "visible": true, "width": '10%' },
+			{ "data": 'executorBlockStrategy', "visible": true, "width": '10%' },
 			{"data": 'author', "visible": false, "width": '10%'},
 			{"data": 'alarmEmail', "visible": false},
 			{
@@ -378,7 +364,6 @@ $(function () {
 					if (data.code == 200) {
 						layer.msg(typeName + I18n.system_success);
 						if (needFresh) {
-							//window.location.reload();
 							jobTable.fnDraw(false);
 						}
 					} else {
@@ -599,7 +584,6 @@ $(function () {
 						icon: '1',
 						end: function (layero, index) {
 							jobTable.fnDraw();
-							//window.location.reload();
 						}
 					});
 				} else {
@@ -785,7 +769,6 @@ $(function () {
 						content: I18n.system_update_suc,
 						icon: '1',
 						end: function (layero, index) {
-							//window.location.reload();
 							jobTable.fnDraw();
 						}
 					});
