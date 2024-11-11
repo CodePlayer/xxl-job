@@ -67,7 +67,7 @@ $(function () {
 			},
 			{
 				"data": 'glueType',
-				"width": '20%',
+				"width": '18%',
 				"visible": true,
 				"render": function (data, type, row) {
 					var glueTypeTitle = findGlueTypeTitle(row.glueType);
@@ -93,13 +93,13 @@ $(function () {
 					return data ? moment(new Date(data)).format("YYYY-MM-DD HH:mm:ss") : "";
 				}
 			},
-			{ "data": 'executorRouteStrategy', "visible": true, "width": '10%' },
+			{ "data": 'executorRouteStrategy', "visible": true, "width": '8%' },
 			{ "data": 'executorBlockStrategy', "visible": true, "width": '10%' },
-			{"data": 'author', "visible": false, "width": '10%'},
+			{"data": 'author', "visible": true, "width": '8%'},
 			{"data": 'alarmEmail', "visible": false},
 			{
 				"data": 'triggerStatus',
-				"width": '10%',
+				"width": '8%',
 				"visible": true,
 				"render": function (data, type, row) {
 					// status
