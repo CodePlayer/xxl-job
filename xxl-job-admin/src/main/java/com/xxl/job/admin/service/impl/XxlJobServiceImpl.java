@@ -53,6 +53,10 @@ public class XxlJobServiceImpl implements XxlJobService {
 
 		// page list
 		List<XxlJobInfo> list = xxlJobInfoDao.pageList(start, length, jobGroup, triggerStatus, jobDesc, executorHandler, author);
+		for (XxlJobInfo xxlJobInfo : list) {
+			xxlJobInfo.setExecutorRouteStrategy(ExecutorRouteStrategyEnum.match(xxlJobInfo.getExecutorRouteStrategy(), null).getTitle());
+			xxlJobInfo.setExecutorBlockStrategy(ExecutorBlockStrategyEnum.match(xxlJobInfo.getExecutorBlockStrategy(), null).getTitle());
+		}
 		int totalCount = ModelUtil.calcTotalCount(list, start, length);
 		if (totalCount == -1) {
 			totalCount = xxlJobInfoDao.pageListCount(start, length, jobGroup, triggerStatus, jobDesc, executorHandler, author);
