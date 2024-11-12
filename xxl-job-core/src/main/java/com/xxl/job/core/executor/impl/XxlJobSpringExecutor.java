@@ -23,6 +23,7 @@ import org.springframework.core.annotation.AnnotatedElementUtils;
 public class XxlJobSpringExecutor extends XxlJobExecutor implements ApplicationContextAware, SmartInitializingSingleton, ApplicationListener<ContextClosedEvent> {
 
 	private static final Logger logger = LoggerFactory.getLogger(XxlJobSpringExecutor.class);
+	// 将该变量放在一个与 GlueFactory 更密切的类中，会有更合理的层次体系结构，不过需要额外更多的代码量，在此也无伤大雅
 	public static volatile boolean groovyRefreshRequired;
 
 	// start
