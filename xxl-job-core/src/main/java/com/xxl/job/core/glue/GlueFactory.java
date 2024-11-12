@@ -27,6 +27,8 @@ public class GlueFactory {
 				if (XxlJobSpringExecutor.groovyRefreshRequired) {
 					glueFactory = factory = new SpringGlueFactory();
 					XxlJobSpringExecutor.groovyRefreshRequired = false;
+				} else {
+					factory = glueFactory;
 				}
 			}
 		}
@@ -54,7 +56,7 @@ public class GlueFactory {
 					this.injectService(instance);
 					return (IJobHandler) instance;
 				} else {
-					throw new IllegalArgumentException(">>>>>>>>>>> xxl-glue, loadNewInstance error, " + "cannot convert from instance[" + instance.getClass() + "] to IJobHandler");
+					throw new IllegalArgumentException(">>>>>>>>>>> xxl-glue, loadNewInstance error, cannot convert from instance[" + instance.getClass() + "] to IJobHandler");
 				}
 			}
 		}
