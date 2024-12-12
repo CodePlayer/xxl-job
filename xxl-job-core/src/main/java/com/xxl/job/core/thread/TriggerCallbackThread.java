@@ -70,7 +70,7 @@ public class TriggerCallbackThread {
 
 					// callback, will retry if error
 					doCallback(callbackParamList);
-                } catch (Throwable e) {
+				} catch (Throwable e) {
 					if (!toStop) {
 						logger.error(e.getMessage(), e);
 					}
@@ -84,7 +84,7 @@ public class TriggerCallbackThread {
 				if (!callbackParamList.isEmpty()) {
 					doCallback(callbackParamList);
 				}
-            } catch (Throwable e) {
+			} catch (Throwable e) {
 				if (!toStop) {
 					logger.error(e.getMessage(), e);
 				}
@@ -101,7 +101,7 @@ public class TriggerCallbackThread {
 			while (!toStop) {
 				try {
 					retryFailCallbackFile();
-                } catch (Throwable e) {
+				} catch (Throwable e) {
 					if (!toStop) {
 						logger.error(e.getMessage(), e);
 					}
@@ -109,7 +109,7 @@ public class TriggerCallbackThread {
 				}
 				try {
 					TimeUnit.SECONDS.sleep(RegistryConfig.BEAT_TIMEOUT);
-                } catch (Throwable e) {
+				} catch (Throwable e) {
 					if (!toStop) {
 						logger.error(e.getMessage(), e);
 					}
@@ -129,7 +129,7 @@ public class TriggerCallbackThread {
 			triggerCallbackThread.interrupt();
 			try {
 				triggerCallbackThread.join();
-            } catch (Throwable e) {
+			} catch (Throwable e) {
 				logger.error(e.getMessage(), e);
 			}
 		}
@@ -139,7 +139,7 @@ public class TriggerCallbackThread {
 			triggerRetryCallbackThread.interrupt();
 			try {
 				triggerRetryCallbackThread.join();
-            } catch (Throwable e) {
+			} catch (Throwable e) {
 				logger.error(e.getMessage(), e);
 			}
 		}
@@ -162,7 +162,7 @@ public class TriggerCallbackThread {
 				} else {
 					callbackLog(callbackParamList, "<br>----------- xxl-job job callback fail, callbackResult:" + callbackResult);
 				}
-            } catch (Throwable e) {
+			} catch (Throwable e) {
 				callbackLog(callbackParamList, "<br>----------- xxl-job job callback error, errorMsg:" + e.getMessage());
 			}
 		}
