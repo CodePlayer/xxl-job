@@ -1,7 +1,7 @@
 package com.xxl.job.admin.core.thread;
 
-import java.sql.*;
-import java.util.Date;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -42,7 +42,7 @@ public class JobScheduleHelper {
 
 			try {
 				TimeUnit.MILLISECONDS.sleep(5000 - System.currentTimeMillis() % 1000);
-			} catch (InterruptedException e) {
+			} catch (Throwable e) {
 				if (!scheduleThreadToStop) {
 					logger.error(e.getMessage(), e);
 				}
@@ -58,14 +58,12 @@ public class JobScheduleHelper {
 				long start = System.currentTimeMillis();
 
 				Connection conn = null;
-				Boolean connAutoCommit = null;
+				Boolean originConnAutoCommit = null;
 				PreparedStatement preparedStatement = null;
-
 				boolean preReadSuc = true;
 				try {
-
 					conn = XxlJobAdminConfig.getAdminConfig().getDataSource().getConnection();
-					connAutoCommit = conn.getAutoCommit();
+					originConnAutoCommit = conn.getAutoCommit();
 					conn.setAutoCommit(false);
 
 					preparedStatement = conn.prepareStatement("SELECT * FROM xxl_job_lock WHERE lock_name = 'schedule_lock' FOR UPDATE");
@@ -76,7 +74,7 @@ public class JobScheduleHelper {
 					// 1、pre read
 					long nowTime = System.currentTimeMillis();
 					List<XxlJobInfo> scheduleList = XxlJobAdminConfig.getAdminConfig().getXxlJobInfoDao().scheduleJobQuery(nowTime + PRE_READ_MS, preReadCount);
-					if (scheduleList != null && scheduleList.size() > 0) {
+					if (scheduleList != null && !scheduleList.isEmpty()) {
 						// 2、push time-ring
 						for (XxlJobInfo jobInfo : scheduleList) {
 
@@ -147,42 +145,42 @@ public class JobScheduleHelper {
 
 					// tx stop
 
-				} catch (Exception e) {
+				} catch (Throwable e) {
 					if (!scheduleThreadToStop) {
 						logger.error(">>>>>>>>>>> xxl-job, JobScheduleHelper#scheduleThread error", e);
 					}
 				} finally {
-
 					// commit
 					if (conn != null) {
 						try {
 							conn.commit();
-						} catch (SQLException e) {
+						} catch (Throwable e) {
 							if (!scheduleThreadToStop) {
 								logger.error(e.getMessage(), e);
 							}
 						}
-						try {
-							conn.setAutoCommit(connAutoCommit);
-						} catch (SQLException e) {
-							if (!scheduleThreadToStop) {
-								logger.error(e.getMessage(), e);
+						if (Boolean.TRUE.equals(originConnAutoCommit)) {
+							try {
+								conn.setAutoCommit(originConnAutoCommit);
+							} catch (Throwable e) {
+								if (!scheduleThreadToStop) {
+									logger.error(e.getMessage(), e);
+								}
+							}
+						}
+						// close PreparedStatement
+						if (preparedStatement != null) {
+							try {
+								preparedStatement.close();
+							} catch (Throwable e) {
+								if (!scheduleThreadToStop) {
+									logger.error(e.getMessage(), e);
+								}
 							}
 						}
 						try {
 							conn.close();
-						} catch (SQLException e) {
-							if (!scheduleThreadToStop) {
-								logger.error(e.getMessage(), e);
-							}
-						}
-					}
-
-					// close PreparedStatement
-					if (preparedStatement != null) {
-						try {
-							preparedStatement.close();
-						} catch (SQLException e) {
+						} catch (Throwable e) {
 							if (!scheduleThreadToStop) {
 								logger.error(e.getMessage(), e);
 							}
@@ -196,13 +194,12 @@ public class JobScheduleHelper {
 					try {
 						// pre-read period: success > scan each second; fail > skip this period;
 						TimeUnit.MILLISECONDS.sleep((preReadSuc ? 1000 : PRE_READ_MS) - System.currentTimeMillis() % 1000);
-					} catch (InterruptedException e) {
+					} catch (Throwable e) {
 						if (!scheduleThreadToStop) {
 							logger.error(e.getMessage(), e);
 						}
 					}
 				}
-
 			}
 
 			logger.info(">>>>>>>>>>> xxl-job, JobScheduleHelper#scheduleThread stop");
@@ -219,7 +216,7 @@ public class JobScheduleHelper {
 				// align second
 				try {
 					TimeUnit.MILLISECONDS.sleep(1000 - System.currentTimeMillis() % 1000);
-				} catch (InterruptedException e) {
+				} catch (Throwable e) {
 					if (!ringThreadToStop) {
 						logger.error(e.getMessage(), e);
 					}
@@ -238,7 +235,7 @@ public class JobScheduleHelper {
 
 					// ring trigger
 					logger.debug(">>>>>>>>>>> xxl-job, time-ring beat : " + nowSecond + " = " + Arrays.asList(ringItemData));
-					if (ringItemData.size() > 0) {
+					if (!ringItemData.isEmpty()) {
 						// do trigger
 						for (int jobId : ringItemData) {
 							// do trigger
@@ -247,7 +244,7 @@ public class JobScheduleHelper {
 						// clear
 						ringItemData.clear();
 					}
-				} catch (Exception e) {
+				} catch (Throwable e) {
 					if (!ringThreadToStop) {
 						logger.error(">>>>>>>>>>> xxl-job, JobScheduleHelper#ringThread error", e);
 					}
@@ -260,7 +257,7 @@ public class JobScheduleHelper {
 		ringThread.start();
 	}
 
-	private void refreshNextValidTime(XxlJobInfo jobInfo, Date fromTime) throws Exception {
+	private void refreshNextValidTime(XxlJobInfo jobInfo, Date fromTime) {
 		try {
 			Date nextValidTime = generateNextValidTime(jobInfo, fromTime);
 			if (nextValidTime != null) {
@@ -274,7 +271,7 @@ public class JobScheduleHelper {
 				logger.error(">>>>>>>>>>> xxl-job, refreshNextValidTime fail for job: jobId={}, scheduleType={}, scheduleConf={}",
 						jobInfo.getId(), jobInfo.getScheduleType(), jobInfo.getScheduleConf());
 			}
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			// generateNextValidTime error, stop job
 			jobInfo.setTriggerStatus(0);
 			jobInfo.setTriggerLastTime(0);
@@ -300,27 +297,14 @@ public class JobScheduleHelper {
 
 		// 1、stop schedule
 		scheduleThreadToStop = true;
-		try {
-			TimeUnit.SECONDS.sleep(1);  // wait
-		} catch (InterruptedException e) {
-			logger.error(e.getMessage(), e);
-		}
-		if (scheduleThread.getState() != Thread.State.TERMINATED) {
-			// interrupt and wait
-			scheduleThread.interrupt();
-			try {
-				scheduleThread.join();
-			} catch (InterruptedException e) {
-				logger.error(e.getMessage(), e);
-			}
-		}
+		sleepToWait(scheduleThread, 1);
 
 		// if has ring data
 		boolean hasRingData = false;
 		if (!ringData.isEmpty()) {
-			for (int second : ringData.keySet()) {
-				List<Integer> tmpData = ringData.get(second);
-				if (tmpData != null && tmpData.size() > 0) {
+			for (Map.Entry<Integer, List<Integer>> entry : ringData.entrySet()) {
+				List<Integer> tmpData = entry.getValue();
+				if (tmpData != null && !tmpData.isEmpty()) {
 					hasRingData = true;
 					break;
 				}
@@ -329,29 +313,33 @@ public class JobScheduleHelper {
 		if (hasRingData) {
 			try {
 				TimeUnit.SECONDS.sleep(8);
-			} catch (InterruptedException e) {
+			} catch (Throwable e) {
 				logger.error(e.getMessage(), e);
 			}
 		}
 
 		// stop ring (wait job-in-memory stop)
 		ringThreadToStop = true;
+		sleepToWait(ringThread, 1);
+
+		logger.info(">>>>>>>>>>> xxl-job, JobScheduleHelper stop");
+	}
+
+	static void sleepToWait(final Thread thread, int sleepSeconds) {
 		try {
-			TimeUnit.SECONDS.sleep(1);
-		} catch (InterruptedException e) {
+			TimeUnit.SECONDS.sleep(sleepSeconds);  // wait
+		} catch (Throwable e) {
 			logger.error(e.getMessage(), e);
 		}
-		if (ringThread.getState() != Thread.State.TERMINATED) {
+		if (thread.getState() != Thread.State.TERMINATED) {
 			// interrupt and wait
-			ringThread.interrupt();
+			thread.interrupt();
 			try {
-				ringThread.join();
-			} catch (InterruptedException e) {
+				thread.join();
+			} catch (Throwable e) {
 				logger.error(e.getMessage(), e);
 			}
 		}
-
-		logger.info(">>>>>>>>>>> xxl-job, JobScheduleHelper stop");
 	}
 
 	// ---------------------- tools ----------------------
