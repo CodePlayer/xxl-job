@@ -28,9 +28,10 @@ public class ExecutorRegistryThread {
 	private volatile boolean toStop = false;
 	/** 在线状态（是否允许注册在线） */
 	public boolean online = true;
+	/** 最后一次启动时的注册信息 */
+	public RegistryParam latest;
 
 	public void start(final String appname, final String address) {
-
 		// valid
 		if (!StringUtils.hasText(appname)) {
 			logger.warn(">>>>>>>>>>> xxl-job, executor registry config fail, appname is null.");
@@ -41,14 +42,18 @@ public class ExecutorRegistryThread {
 			return;
 		}
 
-		registryThread = new Thread(() -> {
+		start(new RegistryParam(RegistryConfig.RegistType.EXECUTOR.name(), appname, address));
+	}
 
+	public void start(final RegistryParam registryParam) {
+		latest = registryParam;
+
+		registryThread = new Thread(() -> {
 			// registry
 			while (!toStop) {
 
 				if (online) {
 					try {
-						RegistryParam registryParam = new RegistryParam(RegistryConfig.RegistType.EXECUTOR.name(), appname, address);
 						for (AdminBiz adminBiz : XxlJobExecutor.getAdminBizList()) {
 							try {
 								ReturnT<String> registryResult = adminBiz.registry(registryParam);
@@ -84,7 +89,6 @@ public class ExecutorRegistryThread {
 
 			// registry remove
 			try {
-				RegistryParam registryParam = new RegistryParam(RegistryConfig.RegistType.EXECUTOR.name(), appname, address);
 				for (AdminBiz adminBiz : XxlJobExecutor.getAdminBizList()) {
 					try {
 						ReturnT<String> registryResult = adminBiz.registryRemove(registryParam);
@@ -127,7 +131,6 @@ public class ExecutorRegistryThread {
 				logger.error(e.getMessage(), e);
 			}
 		}
-
 	}
 
 }
