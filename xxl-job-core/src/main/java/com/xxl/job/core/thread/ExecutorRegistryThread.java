@@ -26,6 +26,8 @@ public class ExecutorRegistryThread {
 
 	private Thread registryThread;
 	private volatile boolean toStop = false;
+	/** 在线状态（是否允许注册在线） */
+	public boolean online = true;
 
 	public void start(final String appname, final String address) {
 
@@ -43,28 +45,30 @@ public class ExecutorRegistryThread {
 
 			// registry
 			while (!toStop) {
-				try {
-					RegistryParam registryParam = new RegistryParam(RegistryConfig.RegistType.EXECUTOR.name(), appname, address);
-					for (AdminBiz adminBiz : XxlJobExecutor.getAdminBizList()) {
-						try {
-							ReturnT<String> registryResult = adminBiz.registry(registryParam);
-							if (registryResult != null && ReturnT.SUCCESS_CODE == registryResult.getCode()) {
-								registryResult = ReturnT.SUCCESS;
-								logger.debug(">>>>>>>>>>> xxl-job registry success, registryParam:{}, registryResult:{}", registryParam, registryResult);
-								break;
-							} else {
-								logger.info(">>>>>>>>>>> xxl-job registry fail, registryParam:{}, registryResult:{}", registryParam, registryResult);
+
+				if (online) {
+					try {
+						RegistryParam registryParam = new RegistryParam(RegistryConfig.RegistType.EXECUTOR.name(), appname, address);
+						for (AdminBiz adminBiz : XxlJobExecutor.getAdminBizList()) {
+							try {
+								ReturnT<String> registryResult = adminBiz.registry(registryParam);
+								if (registryResult != null && ReturnT.SUCCESS_CODE == registryResult.getCode()) {
+									registryResult = ReturnT.SUCCESS;
+									logger.debug(">>>>>>>>>>> xxl-job registry success, registryParam:{}, registryResult:{}", registryParam, registryResult);
+									break;
+								} else {
+									logger.info(">>>>>>>>>>> xxl-job registry fail, registryParam:{}, registryResult:{}", registryParam, registryResult);
+								}
+							} catch (Throwable e) {
+								logger.info(">>>>>>>>>>> xxl-job registry error, registryParam:{}", registryParam, e);
 							}
-						} catch (Throwable e) {
-							logger.info(">>>>>>>>>>> xxl-job registry error, registryParam:{}", registryParam, e);
+
 						}
-
+					} catch (Throwable e) {
+						if (!toStop) {
+							logger.error(e.getMessage(), e);
+						}
 					}
-				} catch (Throwable e) {
-					if (!toStop) {
-						logger.error(e.getMessage(), e);
-					}
-
 				}
 
 				try {
@@ -97,7 +101,6 @@ public class ExecutorRegistryThread {
 						}
 
 					}
-
 				}
 			} catch (Throwable e) {
 				if (!toStop) {
