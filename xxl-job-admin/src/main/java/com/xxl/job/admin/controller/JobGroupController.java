@@ -141,7 +141,7 @@ public class JobGroupController {
 	}
 
 	private TreeSet<String> findRegistryByAppName(String appnameParam) {
-		List<XxlJobRegistry> list = xxlJobRegistryDao.findAll(RegistryConfig.DEAD_TIMEOUT, new Date());
+		List<XxlJobRegistry> list = xxlJobRegistryDao.findActive(RegistryConfig.DEAD_TIMEOUT, new Date());
 		if (!list.isEmpty()) {
 			final TreeSet<String> nodes = new TreeSet<>();
 			for (XxlJobRegistry t : list) {

@@ -19,15 +19,15 @@
 		t.update_time
 	</sql>
 
-	<select id="findDead" parameterType="java.util.HashMap" resultType="java.lang.Integer" >
-		SELECT t.id
+	<select id="findActive" parameterType="java.util.HashMap" resultMap="XxlJobRegistry">
+		SELECT <include refid="Base_Column_List" />
 		FROM xxl_job_registry AS t
-		WHERE t.update_time <![CDATA[ < ]]> DATE_ADD(#{nowTime},INTERVAL -#{timeout} SECOND)
+		WHERE t.update_time <![CDATA[ > ]]> DATE_ADD(#{nowTime},INTERVAL -#{timeout} SECOND)
 	</select>
-	
+
 	<delete id="removeDead" parameterType="java.lang.Integer" >
 		DELETE FROM xxl_job_registry
-		WHERE id IN
+		WHERE id in
 		<foreach collection="ids" item="item" open="(" close=")" separator="," >
 			#{item}
 		</foreach>
