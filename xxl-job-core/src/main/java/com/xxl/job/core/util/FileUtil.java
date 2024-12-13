@@ -4,6 +4,7 @@ import java.io.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
 
 /**
  * file tool
@@ -13,6 +14,24 @@ import org.slf4j.LoggerFactory;
 public class FileUtil {
 
 	private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
+
+	public static void ensureDirExists(File dir) {
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
+	}
+
+	public static void close(@Nullable AutoCloseable res, @Nullable Logger logger) {
+		if (res != null) {
+			try {
+				res.close();
+			} catch (Exception e) {
+				if (logger != null) {
+					logger.error(e.getMessage(), e);
+				}
+			}
+		}
+	}
 
 	/**
 	 * delete recursively
@@ -56,15 +75,8 @@ public class FileUtil {
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		} finally {
-			if (fos != null) {
-				try {
-					fos.close();
-				} catch (IOException e) {
-					logger.error(e.getMessage(), e);
-				}
-			}
+			close(fos, logger);
 		}
-
 	}
 
 	public static byte[] readFileContent(File file) {
@@ -75,20 +87,12 @@ public class FileUtil {
 		try {
 			in = new FileInputStream(file);
 			in.read(filecontent);
-			in.close();
-
 			return filecontent;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			return null;
 		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					logger.error(e.getMessage(), e);
-				}
-			}
+			close(in, logger);
 		}
 	}
 

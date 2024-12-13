@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,7 +123,7 @@ public class SampleXxlJob {
 
 		// param parse
 		String param = XxlJobHelper.getJobParam();
-		if (param == null || param.trim().length() == 0) {
+		if (StringUtils.isBlank(param)) {
 			XxlJobHelper.log("param[" + param + "] invalid.");
 
 			XxlJobHelper.handleFail();
@@ -146,7 +147,7 @@ public class SampleXxlJob {
 		}
 
 		// param valid
-		if (url == null || url.trim().length() == 0) {
+		if (StringUtils.isBlank(url)) {
 			XxlJobHelper.log("url[" + url + "] invalid.");
 
 			XxlJobHelper.handleFail();
@@ -183,7 +184,7 @@ public class SampleXxlJob {
 			connection.connect();
 
 			// data
-			if (isPostMethod && data != null && data.trim().length() > 0) {
+			if (isPostMethod && StringUtils.isNotBlank(data)) {
 				DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream());
 				dataOutputStream.write(data.getBytes(StandardCharsets.UTF_8));
 				dataOutputStream.flush();

@@ -149,7 +149,7 @@ public class SampleXxlJob {
 		}
 
 		// param valid
-		if (url == null || url.trim().length() == 0) {
+		if (!StringUtils.hasText(url)) {
 			XxlJobHelper.log("url[" + url + "] invalid.");
 
 			XxlJobHelper.handleFail();
@@ -186,7 +186,7 @@ public class SampleXxlJob {
 			connection.connect();
 
 			// data
-			if (isPostMethod && data != null && data.trim().length() > 0) {
+			if (isPostMethod && StringUtils.hasText(data)) {
 				DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream());
 				dataOutputStream.write(data.getBytes(StandardCharsets.UTF_8));
 				dataOutputStream.flush();

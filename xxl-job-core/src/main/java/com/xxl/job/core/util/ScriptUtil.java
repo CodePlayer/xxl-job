@@ -118,14 +118,9 @@ public class ScriptUtil {
 				}
 			}
 			outputStream.flush();
-			//out = null;
-			inputStream.close();
-			inputStream = null;
 			return total;
 		} finally {
-			if (inputStream != null) {
-				inputStream.close();
-			}
+			FileUtil.close(inputStream, null);
 		}
 	}
 
