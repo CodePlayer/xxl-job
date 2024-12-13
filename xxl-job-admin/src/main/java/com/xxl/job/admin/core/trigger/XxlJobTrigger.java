@@ -1,6 +1,7 @@
 package com.xxl.job.admin.core.trigger;
 
 import java.util.Date;
+import java.util.List;
 
 import com.xxl.job.admin.core.conf.XxlJobAdminConfig;
 import com.xxl.job.admin.core.model.*;
@@ -91,12 +92,11 @@ public class XxlJobTrigger {
 	 * @param index sharding index
 	 * @param total sharding index
 	 */
-	private static void processTrigger(XxlJobGroup group, XxlJobInfo jobInfo, int finalFailRetryCount, TriggerTypeEnum triggerType, int index, int total) {
+	private static void processTrigger(XxlJobGroup group, XxlJobInfo jobInfo, int finalFailRetryCount, TriggerTypeEnum triggerType, final int index, final int total) {
 
 		// param
 		ExecutorBlockStrategyEnum blockStrategy = ExecutorBlockStrategyEnum.match(jobInfo.getExecutorBlockStrategy(), ExecutorBlockStrategyEnum.SERIAL_EXECUTION);  // block strategy
-		ExecutorRouteStrategyEnum executorRouteStrategyEnum = ExecutorRouteStrategyEnum.match(jobInfo.getExecutorRouteStrategy(), null);    // route strategy
-		String shardingParam = (ExecutorRouteStrategyEnum.SHARDING_BROADCAST == executorRouteStrategyEnum) ? index + "/" + total : null;
+		ExecutorRouteStrategyEnum routeStrategy = ExecutorRouteStrategyEnum.match(jobInfo.getExecutorRouteStrategy(), null);    // route strategy
 
 		// 1、save log-id
 		XxlJobLog jobLog = new XxlJobLog();
@@ -124,15 +124,12 @@ public class XxlJobTrigger {
 		// 3、init address
 		String address = null;
 		ReturnT<String> routeAddressResult = null;
-		if (group.getRegistryList() != null && !group.getRegistryList().isEmpty()) {
-			if (ExecutorRouteStrategyEnum.SHARDING_BROADCAST == executorRouteStrategyEnum) {
-				if (index < group.getRegistryList().size()) {
-					address = group.getRegistryList().get(index);
-				} else {
-					address = group.getRegistryList().get(0);
-				}
+		final List<String> list = group.getRegistryList();
+		if (list != null && !list.isEmpty()) {
+			if (ExecutorRouteStrategyEnum.SHARDING_BROADCAST == routeStrategy) {
+				address = index < list.size() ? list.get(index) : list.get(0);
 			} else {
-				routeAddressResult = executorRouteStrategyEnum.getRouter().route(triggerParam, group.getRegistryList());
+				routeAddressResult = routeStrategy.getRouter().route(triggerParam, list);
 				if (routeAddressResult.getCode() == ReturnT.SUCCESS_CODE) {
 					address = routeAddressResult.getContent();
 				}
@@ -155,8 +152,9 @@ public class XxlJobTrigger {
 		triggerMsgSb.append("<br>").append(I18nUtil.getString("jobconf_trigger_admin_adress")).append("：").append(IpUtil.getIp());
 		triggerMsgSb.append("<br>").append(I18nUtil.getString("jobconf_trigger_exe_regtype")).append("：")
 				.append((group.getAddressType() == 0) ? I18nUtil.getString("jobgroup_field_addressType_0") : I18nUtil.getString("jobgroup_field_addressType_1"));
-		triggerMsgSb.append("<br>").append(I18nUtil.getString("jobconf_trigger_exe_regaddress")).append("：").append(group.getRegistryList());
-		triggerMsgSb.append("<br>").append(I18nUtil.getString("jobinfo_field_executorRouteStrategy")).append("：").append(executorRouteStrategyEnum.getTitle());
+		triggerMsgSb.append("<br>").append(I18nUtil.getString("jobconf_trigger_exe_regaddress")).append("：").append(list);
+		triggerMsgSb.append("<br>").append(I18nUtil.getString("jobinfo_field_executorRouteStrategy")).append("：").append(routeStrategy.getTitle());
+		final String shardingParam = (ExecutorRouteStrategyEnum.SHARDING_BROADCAST == routeStrategy) ? index + "/" + total : null;
 		if (shardingParam != null) {
 			triggerMsgSb.append("(").append(shardingParam).append(")");
 		}

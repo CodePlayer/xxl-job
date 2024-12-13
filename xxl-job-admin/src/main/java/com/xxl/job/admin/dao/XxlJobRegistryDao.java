@@ -18,8 +18,7 @@ public interface XxlJobRegistryDao {
 
 	int removeDead(@Param("ids") List<Integer> ids);
 
-	List<XxlJobRegistry> findAll(@Param("timeout") int timeout,
-	                             @Param("nowTime") Date nowTime);
+	List<XxlJobRegistry> findAll();
 
 	int registrySaveOrUpdate(@Param("registryGroup") String registryGroup,
 	                         @Param("registryKey") String registryKey,
