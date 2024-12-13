@@ -13,10 +13,10 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface XxlJobRegistryDao {
 
-	List<Integer> findDead(@Param("timeout") int timeout,
-	                       @Param("nowTime") Date nowTime);
-
 	int removeDead(@Param("ids") List<Integer> ids);
+
+	List<XxlJobRegistry> findActive(@Param("timeout") int timeout,
+	                                @Param("nowTime") Date nowTime);
 
 	List<XxlJobRegistry> findAll();
 
