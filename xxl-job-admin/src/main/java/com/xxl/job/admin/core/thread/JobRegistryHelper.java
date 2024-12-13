@@ -55,15 +55,24 @@ public class JobRegistryHelper {
 					final XxlJobAdminConfig adminConfig = XxlJobAdminConfig.getAdminConfig();
 					List<XxlJobGroup> groupList = adminConfig.getXxlJobGroupDao().findByAddressType(0);
 					if (groupList != null && !groupList.isEmpty()) {
+						final List<XxlJobRegistry> registries = adminConfig.getXxlJobRegistryDao().findAll();
+						final List<Integer> deadIds = new ArrayList<>();
+						final List<XxlJobRegistry> onlines = new ArrayList<>(registries.size());
+						final long deadTime = System.currentTimeMillis() - (RegistryConfig.DEAD_TIMEOUT * 1000L);
+						for (XxlJobRegistry t : registries) {
+							if (t.getUpdateTime().getTime() > deadTime) {
+								onlines.add(t);
+							} else {
+								deadIds.add(t.getId());
+							}
+						}
 						// remove dead address (admin/executor)
-						List<Integer> ids = adminConfig.getXxlJobRegistryDao().findDead(RegistryConfig.DEAD_TIMEOUT, new Date());
-						if (ids != null && !ids.isEmpty()) {
-							adminConfig.getXxlJobRegistryDao().removeDead(ids);
+						if (!deadIds.isEmpty()) {
+							adminConfig.getXxlJobRegistryDao().removeDead(deadIds);
 						}
 
 						// fresh online address (admin/executor)
-						List<XxlJobRegistry> list = adminConfig.getXxlJobRegistryDao().findAll(RegistryConfig.DEAD_TIMEOUT, new Date());
-						final Map<String, TreeSet<String>> appAddressMap = groupJobsByApp(list);
+						final Map<String, TreeSet<String>> appAddressMap = groupJobsByApp(onlines);
 
 						// fresh group address
 						final Date now = new Date();
