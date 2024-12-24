@@ -38,7 +38,7 @@ public class JobThread extends Thread {
 		this.jobId = jobId;
 		this.handler = handler;
 		this.triggerQueue = new LinkedBlockingQueue<>();
-		this.triggerLogIdSet = Collections.synchronizedSet(new HashSet<>());
+		this.triggerLogIdSet = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
 		// assign job thread name
 		this.setName("xxl-job, JobThread-" + jobId + "-" + System.currentTimeMillis());
