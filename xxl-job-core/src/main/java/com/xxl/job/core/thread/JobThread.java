@@ -38,7 +38,7 @@ public class JobThread extends Thread {
 		this.jobId = jobId;
 		this.handler = handler;
 		this.triggerQueue = new LinkedBlockingQueue<>();
-		this.triggerLogIdSet = Collections.synchronizedSet(new HashSet<>());
+		this.triggerLogIdSet = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
 		// assign job thread name
 		this.setName("xxl-job, JobThread-" + jobId + "-" + System.currentTimeMillis());
@@ -67,7 +67,7 @@ public class JobThread extends Thread {
 	 * kill job thread
 	 */
 	public void toStop(String stopReason) {
-		/**
+		/*
 		 * Thread.interrupt只支持终止线程的阻塞状态(wait、join、sleep)，
 		 * 在阻塞出抛出InterruptedException异常,但是并不会终止运行的线程本身；
 		 * 所以需要注意，此处彻底销毁本线程，需要通过共享变量方式；
