@@ -39,6 +39,18 @@ Now, it's already open source, and many companies use it in production environme
 
 XXL-JOB是一个分布式任务调度平台，其核心设计目标是开发迅速、学习简单、轻量级、易扩展。现已开放源代码并接入多家公司线上产品线，开箱即用。
 
+### 【重要注意事项】
+如果您是从低版本升级到 **XXL-JOB 2.4.2** 及以上，请注意先执行以下 SQL同步表结构变更，否则会出现节点重复注册！！！（直接使用新版本代码+新的表结构，则没有该问题）
+```sql
+-- 【如果是从低版本升级到 2.4.2，需要执行以下 SQL，否则会出现重复注册】
+-- 删除之前的普通索引
+ALTER TABLE `xxl_job_registry`
+DROP INDEX `i_g_k_v`;
+
+-- 添加唯一索引
+ALTER TABLE `xxl_job_registry`
+ADD UNIQUE INDEX `uk_group_key_value` (`registry_group`, `registry_key`, `registry_value`);
+```
 
 ## Sponsor
 XXL-JOB is an open source and free project, with its ongoing development made possible entirely by the support of these awesome backers.

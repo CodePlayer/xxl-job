@@ -38,7 +38,7 @@ public class JobThread extends Thread {
 		this.jobId = jobId;
 		this.handler = handler;
 		this.triggerQueue = new LinkedBlockingQueue<>();
-		this.triggerLogIdSet = Collections.synchronizedSet(new HashSet<>());
+		this.triggerLogIdSet = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
 		// assign job thread name
 		this.setName("xxl-job, JobThread-" + jobId + "-" + System.currentTimeMillis());
@@ -53,12 +53,10 @@ public class JobThread extends Thread {
 	 */
 	public ReturnT<String> pushTriggerQueue(TriggerParam triggerParam) {
 		// avoid repeat
-		if (triggerLogIdSet.contains(triggerParam.getLogId())) {
+		if (!triggerLogIdSet.add(triggerParam.getLogId())) {
 			logger.info(">>>>>>>>>>> duplicate trigger job, logId:{}", triggerParam.getLogId());
 			return new ReturnT<>(ReturnT.FAIL_CODE, "duplicate trigger job, logId:" + triggerParam.getLogId());
 		}
-
-		triggerLogIdSet.add(triggerParam.getLogId());
 		triggerQueue.add(triggerParam);
 		return ReturnT.SUCCESS;
 	}
