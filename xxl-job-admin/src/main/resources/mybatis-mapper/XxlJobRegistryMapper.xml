@@ -27,7 +27,7 @@
 
 	<delete id="removeDead" parameterType="java.lang.Integer" >
 		DELETE FROM xxl_job_registry
-		WHERE id in
+		WHERE id IN
 		<foreach collection="ids" item="item" open="(" close=")" separator="," >
 			#{item}
 		</foreach>
